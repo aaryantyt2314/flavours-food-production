@@ -1,0 +1,2318 @@
+- banner
+  - link "+91-7817878595" [ref=e2]
+  - StaticText "|"
+  - StaticText "11:00 AM – 10:00 PM (Daily)"
+  - link "Instagram" [ref=e3]
+  - StaticText "|"
+  - link "WhatsApp" [ref=e4]
+  - link "FF FLAVOURS FOOD HAPPINESS IS FLAVOURS" [ref=e5]
+    - StaticText "FF"
+    - heading "FLAVOURS FOOD" [level=1, ref=e525]
+    - paragraph
+      - StaticText "HAPPINESS IS FLAVOURS"
+  - navigation
+    - link "Home" [ref=e526]
+    - link "Menu" [ref=e527]
+    - link "Reserve Table" [ref=e528]
+    - link "Gallery" [ref=e529]
+    - link "Contact" [ref=e530]
+  - button [expanded=false, ref=e6]
+  - link [ref=e7]
+    - button [ref=e531]
+- main
+  - heading "Our Menu" [level=1, ref=e8]
+  - paragraph
+    - StaticText "200+ dishes crafted with love — choose your favorites!"
+  - textbox "Search dishes..." [ref=e532]
+  - tablist [ref=e9] focusable [tabindex]
+    - tab "All" [selected, ref=e533]
+    - tab "Fries & Nachos (17)" [ref=e534]
+      - StaticText "Fries & Nachos (17)"
+    - tab "Sandwiches (4)" [ref=e535]
+      - StaticText "Sandwiches (4)"
+    - tab "Combo (1)" [ref=e536]
+      - StaticText "Combo (1)"
+    - tab "Italian Pasta (10)" [ref=e537]
+      - StaticText "Italian Pasta (10)"
+    - tab "The Pizzeria (18)" [ref=e538]
+      - StaticText "The Pizzeria (18)"
+    - tab "Chinese Cuisine (31)" [ref=e539]
+      - StaticText "Chinese Cuisine (31)"
+    - tab "Dilli Haat Momo (10)" [ref=e540]
+      - StaticText "Dilli Haat Momo (10)"
+    - tab "PaniPuri (4)" [ref=e541]
+      - StaticText "PaniPuri (4)"
+    - tab "Chinese Combo (4)" [ref=e542]
+      - StaticText "Chinese Combo (4)"
+    - tab "Beverages (38)" [ref=e543]
+      - StaticText "Beverages (38)"
+    - tab "Tandoori Menu (28)" [ref=e544]
+      - StaticText "Tandoori Menu (28)"
+    - tab "Indian Main Course (29)" [ref=e545]
+      - StaticText "Indian Main Course (29)"
+    - tab "Misthaan Bhandaar (12)" [ref=e546]
+      - StaticText "Misthaan Bhandaar (12)"
+  - StaticText "🍟"
+  - heading "French Fries" [level=3, ref=e10]
+  - StaticText "Normal"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "99"
+  - button "Add" [ref=e11]
+  - StaticText "Crinkle"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "149"
+  - button "Add" [ref=e12]
+  - StaticText "🍟"
+  - heading "Peri Peri Fries" [level=3, ref=e13]
+  - StaticText "Normal"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "129"
+  - button "Add" [ref=e14]
+  - StaticText "Crinkle"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "179"
+  - button "Add" [ref=e15]
+  - StaticText "🍟"
+  - heading "Cheesy Fries" [level=3, ref=e16]
+  - StaticText "Normal"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "149"
+  - button "Add" [ref=e17]
+  - StaticText "Crinkle"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "199"
+  - button "Add" [ref=e18]
+  - StaticText "🍟"
+  - heading "Peri Peri Cheesy Fries" [level=3, ref=e19]
+  - StaticText "Normal"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "159"
+  - button "Add" [ref=e20]
+  - StaticText "Crinkle"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "229"
+  - button "Add" [ref=e21]
+  - StaticText "🍟"
+  - heading "Chipotle Fries" [level=3, ref=e22]
+  - StaticText "Normal"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "159"
+  - button "Add" [ref=e23]
+  - StaticText "Crinkle"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "229"
+  - button "Add" [ref=e24]
+  - StaticText "🍟"
+  - heading "Tandoori Fries" [level=3, ref=e25]
+  - StaticText "Normal"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "159"
+  - button "Add" [ref=e26]
+  - StaticText "Crinkle"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "229"
+  - button "Add" [ref=e27]
+  - StaticText "🍟"
+  - heading "Cocktail Fries" [level=3, ref=e28]
+  - StaticText "Normal"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "159"
+  - button "Add" [ref=e29]
+  - StaticText "Crinkle"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "229"
+  - button "Add" [ref=e30]
+  - StaticText "🍟"
+  - heading "Harissa Fries" [level=3, ref=e31]
+  - StaticText "Normal"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "169"
+  - button "Add" [ref=e32]
+  - StaticText "Crinkle"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "249"
+  - button "Add" [ref=e33]
+  - StaticText "🥪"
+  - heading "Cheesy Mozzarella Sandwich" [level=3, ref=e34]
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "179"
+  - button "Add" [ref=e35]
+  - StaticText "🥪"
+  - heading "Cheese & Corn Paneer Sandwich" [level=3, ref=e36]
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "199"
+  - button "Add" [ref=e37]
+  - StaticText "🥪"
+  - heading "Mix Veggie Paneer Sandwich" [level=3, ref=e38]
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "219"
+  - button "Add" [ref=e39]
+  - StaticText "🥪"
+  - heading "Paneer Tikka Veggie Sandwich" [level=3, ref=e40]
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "239"
+  - button "Add" [ref=e41]
+  - StaticText "🍽️"
+  - heading "Loaded Nachos & Harissa Fries & Peri Peri Fries" [level=3, ref=e42]
+  - StaticText "★"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "299"
+  - button "Add" [ref=e43]
+  - StaticText "🍝"
+  - heading "Tandoori Paneer Pasta" [level=3, ref=e44]
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "169"
+  - button "Add" [ref=e45]
+  - StaticText "🍝"
+  - heading "Tomato Twist Red Sauce Pasta" [level=3, ref=e46]
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "169"
+  - button "Add" [ref=e47]
+  - StaticText "🍝"
+  - heading "Spicy Red Schezwan Pasta" [level=3, ref=e48]
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "169"
+  - button "Add" [ref=e49]
+  - StaticText "🍝"
+  - heading "Creamy White Sauce Pasta" [level=3, ref=e50]
+  - StaticText "★"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "179"
+  - button "Add" [ref=e51]
+  - StaticText "🍝"
+  - heading "Penne McN Cheese Pasta" [level=3, ref=e52]
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "199"
+  - button "Add" [ref=e53]
+  - StaticText "🍝"
+  - heading "Classic Mushroom Pasta" [level=3, ref=e54]
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "199"
+  - button "Add" [ref=e55]
+  - StaticText "🥟"
+  - heading "Steam Momos" [level=3, ref=e56]
+  - StaticText "Veg"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "139"
+  - button "Add" [ref=e57]
+  - StaticText "Paneer"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "159"
+  - button "Add" [ref=e58]
+  - StaticText "🥟"
+  - heading "Fried Momos" [level=3, ref=e59]
+  - StaticText "Veg"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "149"
+  - button "Add" [ref=e60]
+  - StaticText "Paneer"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "169"
+  - button "Add" [ref=e61]
+  - StaticText "Cheese & Corn"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "229"
+  - button "Add" [ref=e62]
+  - StaticText "🥟"
+  - heading "Dragon Momos" [level=3, ref=e63]
+  - StaticText "Veg"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "209"
+  - button "Add" [ref=e64]
+  - StaticText "Paneer"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "229"
+  - button "Add" [ref=e65]
+  - StaticText "🥟"
+  - heading "Schezwan Gravy Momos" [level=3, ref=e66]
+  - StaticText "Veg"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "229"
+  - button "Add" [ref=e67]
+  - StaticText "Paneer"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "249"
+  - button "Add" [ref=e68]
+  - StaticText "🥟"
+  - heading "KFC Momos" [level=3, ref=e69]
+  - StaticText "★"
+  - StaticText "Veg"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "249"
+  - button "Add" [ref=e70]
+  - StaticText "Paneer"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "269"
+  - button "Add" [ref=e71]
+  - StaticText "Cheese & Corn"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "259"
+  - button "Add" [ref=e72]
+  - StaticText "🥟"
+  - heading "Peri Peri KFC Momos" [level=3, ref=e73]
+  - StaticText "Veg"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "259"
+  - button "Add" [ref=e74]
+  - StaticText "Paneer"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "269"
+  - button "Add" [ref=e75]
+  - StaticText "Cheese & Corn"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "269"
+  - button "Add" [ref=e76]
+  - StaticText "🥟"
+  - heading "Tandoori Momos" [level=3, ref=e77]
+  - StaticText "Veg"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "249"
+  - button "Add" [ref=e78]
+  - StaticText "Paneer"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "269"
+  - button "Add" [ref=e79]
+  - StaticText "Cheese & Corn"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "269"
+  - button "Add" [ref=e80]
+  - StaticText "🥟"
+  - heading "Afgani Momos" [level=3, ref=e81]
+  - StaticText "Veg"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "249"
+  - button "Add" [ref=e82]
+  - StaticText "Paneer"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "269"
+  - button "Add" [ref=e83]
+  - StaticText "Cheese & Corn"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "269"
+  - button "Add" [ref=e84]
+  - StaticText "🫕"
+  - heading "Indian Mexican PaniPuri" [level=3, ref=e85]
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "179"
+  - button "Add" [ref=e86]
+  - StaticText "🫕"
+  - heading "Cheese PaniPuri Shot" [level=3, ref=e87]
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "149"
+  - button "Add" [ref=e88]
+  - StaticText "🫕"
+  - heading "Pizzeria PaniPuri" [level=3, ref=e89]
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "199"
+  - button "Add" [ref=e90]
+  - StaticText "🫕"
+  - heading "Trio Combo" [level=3, ref=e91]
+  - StaticText "★"
+  - paragraph
+    - StaticText "Indian Mexican, Cheese PaniPuri Shot, Pizzeria PaniPuri"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "249"
+  - button "Add" [ref=e92]
+  - StaticText "🍽️"
+  - heading "Veg Noodles Manchurian Combo" [level=3, ref=e93]
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "299"
+  - button "Add" [ref=e94]
+  - StaticText "🍽️"
+  - heading "Veg Noodles Chilly Paneer Combo" [level=3, ref=e95]
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "369"
+  - button "Add" [ref=e96]
+  - StaticText "🍽️"
+  - heading "Veg Fried Rice Manchurian Combo" [level=3, ref=e97]
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "299"
+  - button "Add" [ref=e98]
+  - StaticText "🍽️"
+  - heading "Veg Fried Rice Chilly Paneer Combo" [level=3, ref=e99]
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "369"
+  - button "Add" [ref=e100]
+  - heading "Nachos" [level=3, ref=e101]
+  - StaticText "🍟"
+  - heading "Salsa & Cheese Blend Nachos" [level=3, ref=e102]
+  - paragraph
+    - StaticText "Nachos"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "179"
+  - button "Add" [ref=e103]
+  - StaticText "🍟"
+  - heading "Veggie Loaded Nachos" [level=3, ref=e104]
+  - paragraph
+    - StaticText "Nachos"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "199"
+  - button "Add" [ref=e105]
+  - heading "Add-On Dips" [level=3, ref=e106]
+  - StaticText "🍟"
+  - heading "Cheese Dip" [level=3, ref=e107]
+  - paragraph
+    - StaticText "Add-On Dips"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "20"
+  - button "Add" [ref=e108]
+  - StaticText "🍟"
+  - heading "Tandoori Dip" [level=3, ref=e109]
+  - paragraph
+    - StaticText "Add-On Dips"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "20"
+  - button "Add" [ref=e110]
+  - StaticText "🍟"
+  - heading "Chipotle Dip" [level=3, ref=e111]
+  - paragraph
+    - StaticText "Add-On Dips"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "20"
+  - button "Add" [ref=e112]
+  - StaticText "🍟"
+  - heading "Cocktail Dip" [level=3, ref=e113]
+  - paragraph
+    - StaticText "Add-On Dips"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "20"
+  - button "Add" [ref=e114]
+  - StaticText "🍟"
+  - heading "Mayo Dip" [level=3, ref=e115]
+  - paragraph
+    - StaticText "Add-On Dips"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "20"
+  - button "Add" [ref=e116]
+  - StaticText "🍟"
+  - heading "Mint Mayo" [level=3, ref=e117]
+  - paragraph
+    - StaticText "Add-On Dips"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "20"
+  - button "Add" [ref=e118]
+  - StaticText "🍟"
+  - heading "Harissa Dip" [level=3, ref=e119]
+  - paragraph
+    - StaticText "Add-On Dips"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "20"
+  - button "Add" [ref=e120]
+  - heading "Pasta Add-On" [level=3, ref=e121]
+  - StaticText "🍝"
+  - heading "Paneer Add-On" [level=3, ref=e122]
+  - paragraph
+    - StaticText "Pasta Add-On"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "49"
+  - button "Add" [ref=e123]
+  - StaticText "🍝"
+  - heading "Mushroom Add-On" [level=3, ref=e124]
+  - paragraph
+    - StaticText "Pasta Add-On"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "69"
+  - button "Add" [ref=e125]
+  - StaticText "🍝"
+  - heading "Broccoli Add-On" [level=3, ref=e126]
+  - paragraph
+    - StaticText "Pasta Add-On"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "89"
+  - button "Add" [ref=e127]
+  - StaticText "🍝"
+  - heading "Extra Cheese Add-On" [level=3, ref=e128]
+  - paragraph
+    - StaticText "Pasta Add-On"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "49"
+  - button "Add" [ref=e129]
+  - heading "Classic" [level=3, ref=e130]
+  - StaticText "🍕"
+  - heading "Margherita" [level=3, ref=e131]
+  - paragraph
+    - StaticText "Classic Cheese Pizza"
+  - paragraph
+    - StaticText "Classic"
+  - StaticText "M"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "299"
+  - button "Add" [ref=e132]
+  - StaticText "L"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "339"
+  - button "Add" [ref=e133]
+  - heading "Favourite" [level=3, ref=e134]
+  - StaticText "🍕"
+  - heading "Cheese N Corn" [level=3, ref=e135]
+  - paragraph
+    - StaticText "Cheese and sweet corn"
+  - paragraph
+    - StaticText "Favourite"
+  - StaticText "M"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "379"
+  - button "Add" [ref=e136]
+  - StaticText "L"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "489"
+  - button "Add" [ref=e137]
+  - StaticText "🍕"
+  - heading "Schezwan Margherita" [level=3, ref=e138]
+  - paragraph
+    - StaticText "With spicy schezwan sauce"
+  - paragraph
+    - StaticText "Favourite"
+  - StaticText "M"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "379"
+  - button "Add" [ref=e139]
+  - StaticText "L"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "489"
+  - button "Add" [ref=e140]
+  - StaticText "🍕"
+  - heading "Tandoori Onion" [level=3, ref=e141]
+  - paragraph
+    - StaticText "Cheese and Onion in tandoori sauce"
+  - paragraph
+    - StaticText "Favourite"
+  - StaticText "M"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "379"
+  - button "Add" [ref=e142]
+  - StaticText "L"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "489"
+  - button "Add" [ref=e143]
+  - heading "Delight" [level=3, ref=e144]
+  - StaticText "🍕"
+  - heading "Veggie Feast" [level=3, ref=e145]
+  - StaticText "★"
+  - paragraph
+    - StaticText "Sweet corn, Herbed Onion & Capsicum"
+  - paragraph
+    - StaticText "Delight"
+  - StaticText "M"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "449"
+  - button "Add" [ref=e146]
+  - StaticText "L"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "569"
+  - button "Add" [ref=e147]
+  - StaticText "🍕"
+  - heading "Spiced Paneer" [level=3, ref=e148]
+  - paragraph
+    - StaticText "Spiced Paneer, Onion & Tomato"
+  - paragraph
+    - StaticText "Delight"
+  - StaticText "M"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "449"
+  - button "Add" [ref=e149]
+  - StaticText "L"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "569"
+  - button "Add" [ref=e150]
+  - StaticText "🍕"
+  - heading "Veggie Tandoori" [level=3, ref=e151]
+  - paragraph
+    - StaticText "Sweet corn, Capsicum & Mushroom in Tandoori Sauce"
+  - paragraph
+    - StaticText "Delight"
+  - StaticText "M"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "449"
+  - button "Add" [ref=e152]
+  - StaticText "L"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "569"
+  - button "Add" [ref=e153]
+  - StaticText "🍕"
+  - heading "Double Cheese" [level=3, ref=e154]
+  - paragraph
+    - StaticText "Extra Cheese on Cheese"
+  - paragraph
+    - StaticText "Delight"
+  - StaticText "M"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "449"
+  - button "Add" [ref=e155]
+  - StaticText "L"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "569"
+  - button "Add" [ref=e156]
+  - heading "Signature" [level=3, ref=e157]
+  - StaticText "🍕"
+  - heading "Farmer's Pick" [level=3, ref=e158]
+  - paragraph
+    - StaticText "Herbed onion & Green Capsicum, Red Capsicum, Mushroom & Baby Corn"
+  - paragraph
+    - StaticText "Signature"
+  - StaticText "M"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "529"
+  - button "Add" [ref=e159]
+  - StaticText "L"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "669"
+  - button "Add" [ref=e160]
+  - StaticText "🍕"
+  - heading "Country Feast" [level=3, ref=e161]
+  - paragraph
+    - StaticText "Herbed Onion & Green Capsicum, Sweet corn, Tomato & mushroom"
+  - paragraph
+    - StaticText "Signature"
+  - StaticText "M"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "529"
+  - button "Add" [ref=e162]
+  - StaticText "L"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "669"
+  - button "Add" [ref=e163]
+  - StaticText "🍕"
+  - heading "Tandoori Paneer" [level=3, ref=e164]
+  - StaticText "★"
+  - paragraph
+    - StaticText "Spiced Paneer, Onion, Green Capsicum & Red Peprika in Tandoori Sauce"
+  - paragraph
+    - StaticText "Signature"
+  - StaticText "M"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "529"
+  - button "Add" [ref=e165]
+  - StaticText "L"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "669"
+  - button "Add" [ref=e166]
+  - StaticText "🍕"
+  - heading "Bold BBQ Veggies" [level=3, ref=e167]
+  - paragraph
+    - StaticText "BBQ Sauce Drizzle Topped With Mushroom, Onion, Green Capsicum & Red Peprika"
+  - paragraph
+    - StaticText "Signature"
+  - StaticText "M"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "529"
+  - button "Add" [ref=e168]
+  - StaticText "L"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "669"
+  - button "Add" [ref=e169]
+  - StaticText "🍕"
+  - heading "Peppy Paneer" [level=3, ref=e170]
+  - paragraph
+    - StaticText "Paneer Onion & Red Peprika"
+  - paragraph
+    - StaticText "Signature"
+  - StaticText "M"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "529"
+  - button "Add" [ref=e171]
+  - StaticText "L"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "669"
+  - button "Add" [ref=e172]
+  - StaticText "🍕"
+  - heading "Mexican Fiesta" [level=3, ref=e173]
+  - paragraph
+    - StaticText "Red & Green Capsicum, Jalapeno, Onion, Black Olives & Sweet Corn"
+  - paragraph
+    - StaticText "Signature"
+  - StaticText "M"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "529"
+  - button "Add" [ref=e174]
+  - StaticText "L"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "669"
+  - button "Add" [ref=e175]
+  - heading "Supreme" [level=3, ref=e176]
+  - StaticText "🍕"
+  - heading "Veggie Supreme" [level=3, ref=e177]
+  - paragraph
+    - StaticText "Onion, Green Capsicum, Mushroom & Red Peprika, Black Olives & Sweet corn"
+  - paragraph
+    - StaticText "Supreme"
+  - StaticText "M"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "599"
+  - button "Add" [ref=e178]
+  - StaticText "L"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "769"
+  - button "Add" [ref=e179]
+  - StaticText "🍕"
+  - heading "Ultimate Tandoori Veggie" [level=3, ref=e180]
+  - paragraph
+    - StaticText "Green Capsicum, Onion, Mushroom, Tomato, Jalapeno, Drizzle of Mint Mayo"
+  - paragraph
+    - StaticText "Supreme"
+  - StaticText "M"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "599"
+  - button "Add" [ref=e181]
+  - StaticText "L"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "769"
+  - button "Add" [ref=e182]
+  - StaticText "🍕"
+  - heading "Mazedar Makhni Paneer" [level=3, ref=e183]
+  - paragraph
+    - StaticText "Spiced Paneer, Onion, Red Capsicum With Makhni Sauce Sprinkle"
+  - paragraph
+    - StaticText "Supreme"
+  - StaticText "M"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "599"
+  - button "Add" [ref=e184]
+  - StaticText "L"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "769"
+  - button "Add" [ref=e185]
+  - StaticText "🍕"
+  - heading "Chilli Paneer Blaze" [level=3, ref=e186]
+  - paragraph
+    - StaticText "Herbed Onion, Paneer, Green Capsicum & Tomato, Green Chilli"
+  - paragraph
+    - StaticText "Supreme"
+  - StaticText "M"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "599"
+  - button "Add" [ref=e187]
+  - StaticText "L"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "769"
+  - button "Add" [ref=e188]
+  - heading "Noodles" [level=3, ref=e189]
+  - StaticText "🥡"
+  - heading "Veg Noodles" [level=3, ref=e190]
+  - paragraph
+    - StaticText "Noodles"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "149"
+  - button "Add" [ref=e191]
+  - StaticText "🥡"
+  - heading "Veg Butter Noodles" [level=3, ref=e192]
+  - paragraph
+    - StaticText "Noodles"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "169"
+  - button "Add" [ref=e193]
+  - StaticText "🥡"
+  - heading "Hakka Noodles" [level=3, ref=e194]
+  - StaticText "★"
+  - paragraph
+    - StaticText "Noodles"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "199"
+  - button "Add" [ref=e195]
+  - StaticText "🥡"
+  - heading "Paneer Noodles" [level=3, ref=e196]
+  - paragraph
+    - StaticText "Noodles"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "239"
+  - button "Add" [ref=e197]
+  - StaticText "🥡"
+  - heading "Singapore Noodles" [level=3, ref=e198]
+  - paragraph
+    - StaticText "Noodles"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "199"
+  - button "Add" [ref=e199]
+  - StaticText "🥡"
+  - heading "Chilly Garlic Noodles" [level=3, ref=e200]
+  - paragraph
+    - StaticText "Noodles"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "199"
+  - button "Add" [ref=e201]
+  - StaticText "🥡"
+  - heading "Schezwan Noodles" [level=3, ref=e202]
+  - paragraph
+    - StaticText "Noodles"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "219"
+  - button "Add" [ref=e203]
+  - heading "Soups" [level=3, ref=e204]
+  - StaticText "🥡"
+  - heading "Tomato Soup" [level=3, ref=e205]
+  - paragraph
+    - StaticText "Soups"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "179"
+  - button "Add" [ref=e206]
+  - StaticText "🥡"
+  - heading "Veg Soup" [level=3, ref=e207]
+  - paragraph
+    - StaticText "Soups"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "129"
+  - button "Add" [ref=e208]
+  - StaticText "🥡"
+  - heading "Veg Noodles Soup" [level=3, ref=e209]
+  - paragraph
+    - StaticText "Soups"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "149"
+  - button "Add" [ref=e210]
+  - StaticText "🥡"
+  - heading "Hot N Sour Soup" [level=3, ref=e211]
+  - paragraph
+    - StaticText "Soups"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "169"
+  - button "Add" [ref=e212]
+  - StaticText "🥡"
+  - heading "Veg Manchow Soup" [level=3, ref=e213]
+  - paragraph
+    - StaticText "Soups"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "179"
+  - button "Add" [ref=e214]
+  - StaticText "🥡"
+  - heading "Sweet Corn Soup" [level=3, ref=e215]
+  - paragraph
+    - StaticText "Soups"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "179"
+  - button "Add" [ref=e216]
+  - heading "Rolls" [level=3, ref=e217]
+  - StaticText "🥡"
+  - heading "Veg Cigar Roll" [level=3, ref=e218]
+  - paragraph
+    - StaticText "Rolls"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "149"
+  - button "Add" [ref=e219]
+  - StaticText "🥡"
+  - heading "KFC Cigar Roll" [level=3, ref=e220]
+  - paragraph
+    - StaticText "Rolls"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "179"
+  - button "Add" [ref=e221]
+  - heading "65 Items" [level=3, ref=e222]
+  - StaticText "🥡"
+  - heading "Paneer 65" [level=3, ref=e223]
+  - paragraph
+    - StaticText "65 Items"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "219"
+  - button "Add" [ref=e224]
+  - StaticText "🥡"
+  - heading "Veg 65" [level=3, ref=e225]
+  - paragraph
+    - StaticText "65 Items"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "179"
+  - button "Add" [ref=e226]
+  - StaticText "🥡"
+  - heading "Mushroom 65" [level=3, ref=e227]
+  - paragraph
+    - StaticText "65 Items"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "279"
+  - button "Add" [ref=e228]
+  - StaticText "🥡"
+  - heading "Crispy Corn" [level=3, ref=e229]
+  - paragraph
+    - StaticText "65 Items"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "239"
+  - button "Add" [ref=e230]
+  - heading "Chilly Items" [level=3, ref=e231]
+  - StaticText "🥡"
+  - heading "Chilly Potato" [level=3, ref=e232]
+  - paragraph
+    - StaticText "Chilly Items"
+  - StaticText "Dry"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "149"
+  - button "Add" [ref=e233]
+  - StaticText "Gravy"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "149"
+  - button "Add" [ref=e234]
+  - StaticText "🥡"
+  - heading "Chilly Paneer" [level=3, ref=e235]
+  - StaticText "★"
+  - paragraph
+    - StaticText "Chilly Items"
+  - StaticText "Dry"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "249"
+  - button "Add" [ref=e236]
+  - StaticText "Gravy"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "279"
+  - button "Add" [ref=e237]
+  - StaticText "🥡"
+  - heading "Chilly Mushroom" [level=3, ref=e238]
+  - paragraph
+    - StaticText "Chilly Items"
+  - StaticText "Dry"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "289"
+  - button "Add" [ref=e239]
+  - StaticText "Gravy"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "309"
+  - button "Add" [ref=e240]
+  - StaticText "🥡"
+  - heading "Veg Manchurian" [level=3, ref=e241]
+  - paragraph
+    - StaticText "Chilly Items"
+  - StaticText "Dry"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "199"
+  - button "Add" [ref=e242]
+  - StaticText "Gravy"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "219"
+  - button "Add" [ref=e243]
+  - StaticText "🥡"
+  - heading "Veg Manchurian Schezwan" [level=3, ref=e244]
+  - paragraph
+    - StaticText "Chilly Items"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "239"
+  - button "Add" [ref=e245]
+  - heading "Fried Rice" [level=3, ref=e246]
+  - StaticText "🥡"
+  - heading "Veg Fried Rice" [level=3, ref=e247]
+  - paragraph
+    - StaticText "Fried Rice"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "149"
+  - button "Add" [ref=e248]
+  - StaticText "🥡"
+  - heading "Butter Fried Rice" [level=3, ref=e249]
+  - paragraph
+    - StaticText "Fried Rice"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "169"
+  - button "Add" [ref=e250]
+  - StaticText "🥡"
+  - heading "Chilly Garlic Fried Rice" [level=3, ref=e251]
+  - paragraph
+    - StaticText "Fried Rice"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "199"
+  - button "Add" [ref=e252]
+  - StaticText "🥡"
+  - heading "Singapore Fried Rice" [level=3, ref=e253]
+  - paragraph
+    - StaticText "Fried Rice"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "239"
+  - button "Add" [ref=e254]
+  - StaticText "🥡"
+  - heading "Hakka Fried Rice" [level=3, ref=e255]
+  - paragraph
+    - StaticText "Fried Rice"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "239"
+  - button "Add" [ref=e256]
+  - StaticText "🥡"
+  - heading "Paneer Fried Rice" [level=3, ref=e257]
+  - paragraph
+    - StaticText "Fried Rice"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "259"
+  - button "Add" [ref=e258]
+  - StaticText "🥡"
+  - heading "Paneer Schezwan Fried Rice" [level=3, ref=e259]
+  - paragraph
+    - StaticText "Fried Rice"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "279"
+  - button "Add" [ref=e260]
+  - heading "Momo Combo" [level=3, ref=e261]
+  - StaticText "🥟"
+  - heading "Fried Combo" [level=3, ref=e262]
+  - paragraph
+    - StaticText "Veg + Paneer + Cheese N Corn, 9 pcs"
+  - paragraph
+    - StaticText "Momo Combo"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "199"
+  - button "Add" [ref=e263]
+  - StaticText "🥟"
+  - heading "KFC Combo" [level=3, ref=e264]
+  - paragraph
+    - StaticText "Veg + Paneer + Cheese N Corn, 9 pcs"
+  - paragraph
+    - StaticText "Momo Combo"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "299"
+  - button "Add" [ref=e265]
+  - heading "Hot Coffee" [level=3, ref=e266]
+  - StaticText "🥤"
+  - heading "Hot Black Coffee" [level=3, ref=e267]
+  - paragraph
+    - StaticText "Hot Coffee"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "59"
+  - button "Add" [ref=e268]
+  - StaticText "🥤"
+  - heading "Hot Vanilla Coffee" [level=3, ref=e269]
+  - paragraph
+    - StaticText "Hot Coffee"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "79"
+  - button "Add" [ref=e270]
+  - StaticText "🥤"
+  - heading "Hot Butterscotch Coffee" [level=3, ref=e271]
+  - paragraph
+    - StaticText "Hot Coffee"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "79"
+  - button "Add" [ref=e272]
+  - StaticText "🥤"
+  - heading "Hot Hazelnut Coffee" [level=3, ref=e273]
+  - paragraph
+    - StaticText "Hot Coffee"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "79"
+  - button "Add" [ref=e274]
+  - StaticText "🥤"
+  - heading "Hot Coffee & Cream" [level=3, ref=e275]
+  - paragraph
+    - StaticText "Hot Coffee"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "129"
+  - button "Add" [ref=e276]
+  - StaticText "🥤"
+  - heading "Hot Mocha Float" [level=3, ref=e277]
+  - paragraph
+    - StaticText "Hot Coffee"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "129"
+  - button "Add" [ref=e278]
+  - StaticText "🥤"
+  - heading "Hot Chocolate" [level=3, ref=e279]
+  - paragraph
+    - StaticText "Hot Coffee"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "139"
+  - button "Add" [ref=e280]
+  - heading "Cold Coffee" [level=3, ref=e281]
+  - StaticText "🥤"
+  - heading "Cold Coffee Blast" [level=3, ref=e282]
+  - paragraph
+    - StaticText "Cold Coffee"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "149"
+  - button "Add" [ref=e283]
+  - StaticText "🥤"
+  - heading "Cold Coffee Mocha" [level=3, ref=e284]
+  - paragraph
+    - StaticText "Cold Coffee"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "169"
+  - button "Add" [ref=e285]
+  - StaticText "🥤"
+  - heading "Cold Coffee Irish" [level=3, ref=e286]
+  - paragraph
+    - StaticText "Cold Coffee"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "169"
+  - button "Add" [ref=e287]
+  - StaticText "🥤"
+  - heading "Cold Nutella Blast" [level=3, ref=e288]
+  - StaticText "★"
+  - paragraph
+    - StaticText "Cold Coffee"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "199"
+  - button "Add" [ref=e289]
+  - heading "Mocktails" [level=3, ref=e290]
+  - StaticText "🥤"
+  - heading "Virgin Mojito" [level=3, ref=e291]
+  - StaticText "★"
+  - paragraph
+    - StaticText "Mocktails"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "149"
+  - button "Add" [ref=e292]
+  - StaticText "🥤"
+  - heading "Virgin Appletini" [level=3, ref=e293]
+  - paragraph
+    - StaticText "Mocktails"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "149"
+  - button "Add" [ref=e294]
+  - StaticText "🥤"
+  - heading "Blue Ocean" [level=3, ref=e295]
+  - paragraph
+    - StaticText "Mocktails"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "149"
+  - button "Add" [ref=e296]
+  - StaticText "🥤"
+  - heading "Zeasty Heatwave" [level=3, ref=e297]
+  - paragraph
+    - StaticText "Mocktails"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "149"
+  - button "Add" [ref=e298]
+  - StaticText "🥤"
+  - heading "Peachy Bliss" [level=3, ref=e299]
+  - paragraph
+    - StaticText "Mocktails"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "149"
+  - button "Add" [ref=e300]
+  - StaticText "🥤"
+  - heading "Ruby Sunset" [level=3, ref=e301]
+  - paragraph
+    - StaticText "Mocktails"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "149"
+  - button "Add" [ref=e302]
+  - StaticText "🥤"
+  - heading "Midnight Magic" [level=3, ref=e303]
+  - paragraph
+    - StaticText "Mocktails"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "169"
+  - button "Add" [ref=e304]
+  - StaticText "🥤"
+  - heading "Fiery Mango Tango" [level=3, ref=e305]
+  - paragraph
+    - StaticText "Mocktails"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "169"
+  - button "Add" [ref=e306]
+  - StaticText "🥤"
+  - heading "Tropical Breeze" [level=3, ref=e307]
+  - paragraph
+    - StaticText "Mocktails"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "169"
+  - button "Add" [ref=e308]
+  - StaticText "🥤"
+  - heading "Guava Inferno" [level=3, ref=e309]
+  - paragraph
+    - StaticText "Mocktails"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "169"
+  - button "Add" [ref=e310]
+  - StaticText "🥤"
+  - heading "Melon Burst" [level=3, ref=e311]
+  - paragraph
+    - StaticText "Mocktails"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "169"
+  - button "Add" [ref=e312]
+  - heading "Tea" [level=3, ref=e313]
+  - StaticText "🥤"
+  - heading "Ginger Tea" [level=3, ref=e314]
+  - paragraph
+    - StaticText "Tea"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "39"
+  - button "Add" [ref=e315]
+  - StaticText "🥤"
+  - heading "Elaichi Tea" [level=3, ref=e316]
+  - paragraph
+    - StaticText "Tea"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "39"
+  - button "Add" [ref=e317]
+  - StaticText "🥤"
+  - heading "Masala Tea" [level=3, ref=e318]
+  - paragraph
+    - StaticText "Tea"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "49"
+  - button "Add" [ref=e319]
+  - heading "Shakes" [level=3, ref=e320]
+  - StaticText "🥤"
+  - heading "Vanilla Shake" [level=3, ref=e321]
+  - paragraph
+    - StaticText "Shakes"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "149"
+  - button "Add" [ref=e322]
+  - StaticText "🥤"
+  - heading "Strawberry Shake" [level=3, ref=e323]
+  - paragraph
+    - StaticText "Shakes"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "149"
+  - button "Add" [ref=e324]
+  - StaticText "🥤"
+  - heading "Chocolate Shake" [level=3, ref=e325]
+  - paragraph
+    - StaticText "Shakes"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "169"
+  - button "Add" [ref=e326]
+  - StaticText "🥤"
+  - heading "Butterscotch Shake" [level=3, ref=e327]
+  - paragraph
+    - StaticText "Shakes"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "169"
+  - button "Add" [ref=e328]
+  - StaticText "🥤"
+  - heading "Oreo Shake" [level=3, ref=e329]
+  - StaticText "★"
+  - paragraph
+    - StaticText "Shakes"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "189"
+  - button "Add" [ref=e330]
+  - StaticText "🥤"
+  - heading "KitKat Shake" [level=3, ref=e331]
+  - paragraph
+    - StaticText "Shakes"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "189"
+  - button "Add" [ref=e332]
+  - StaticText "🥤"
+  - heading "Brownie Blaze Shake" [level=3, ref=e333]
+  - paragraph
+    - StaticText "Shakes"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "219"
+  - button "Add" [ref=e334]
+  - heading "Others" [level=3, ref=e335]
+  - StaticText "🥤"
+  - heading "Cold Drink Cans" [level=3, ref=e336]
+  - paragraph
+    - StaticText "MRP"
+  - paragraph
+    - StaticText "Others"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "40"
+  - button "Add" [ref=e337]
+  - StaticText "🥤"
+  - heading "Red Bull" [level=3, ref=e338]
+  - paragraph
+    - StaticText "MRP"
+  - paragraph
+    - StaticText "Others"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "125"
+  - button "Add" [ref=e339]
+  - StaticText "🥤"
+  - heading "CoolBerg" [level=3, ref=e340]
+  - paragraph
+    - StaticText "MRP"
+  - paragraph
+    - StaticText "Others"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "80"
+  - button "Add" [ref=e341]
+  - StaticText "🥤"
+  - heading "Ice Cubes" [level=3, ref=e342]
+  - paragraph
+    - StaticText "Others"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "39"
+  - button "Add" [ref=e343]
+  - StaticText "🥤"
+  - heading "Sweet Lassi" [level=3, ref=e344]
+  - paragraph
+    - StaticText "Others"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "79"
+  - button "Add" [ref=e345]
+  - StaticText "🥤"
+  - heading "Lemon Soda" [level=3, ref=e346]
+  - paragraph
+    - StaticText "Others"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "99"
+  - button "Add" [ref=e347]
+  - heading "Tikka's" [level=3, ref=e348]
+  - StaticText "🔥"
+  - heading "Cheese Stuff Paneer Tikka" [level=3, ref=e349]
+  - StaticText "★"
+  - paragraph
+    - StaticText "Tikka's"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "379"
+  - button "Add" [ref=e350]
+  - StaticText "🔥"
+  - heading "Tandoori Paneer Tikka" [level=3, ref=e351]
+  - paragraph
+    - StaticText "Tikka's"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "319"
+  - button "Add" [ref=e352]
+  - StaticText "🔥"
+  - heading "Malai Paneer Tikka" [level=3, ref=e353]
+  - paragraph
+    - StaticText "Tikka's"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "349"
+  - button "Add" [ref=e354]
+  - StaticText "🔥"
+  - heading "Haryali Paneer Tikka" [level=3, ref=e355]
+  - paragraph
+    - StaticText "Tikka's"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "329"
+  - button "Add" [ref=e356]
+  - StaticText "🔥"
+  - heading "Mushroom Tikka" [level=3, ref=e357]
+  - paragraph
+    - StaticText "Tikka's"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "319"
+  - button "Add" [ref=e358]
+  - StaticText "🔥"
+  - heading "Mushroom Malai Tikka" [level=3, ref=e359]
+  - paragraph
+    - StaticText "Tikka's"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "349"
+  - button "Add" [ref=e360]
+  - StaticText "🔥"
+  - heading "Malai Broccoli" [level=3, ref=e361]
+  - paragraph
+    - StaticText "Tikka's"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "420"
+  - button "Add" [ref=e362]
+  - heading "Chaap" [level=3, ref=e363]
+  - StaticText "🔥"
+  - heading "Malai Chaap" [level=3, ref=e364]
+  - paragraph
+    - StaticText "Chaap"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "299"
+  - button "Add" [ref=e365]
+  - StaticText "🔥"
+  - heading "Afgani Chaap" [level=3, ref=e366]
+  - paragraph
+    - StaticText "Chaap"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "299"
+  - button "Add" [ref=e367]
+  - StaticText "🔥"
+  - heading "Masala Chaap" [level=3, ref=e368]
+  - paragraph
+    - StaticText "Chaap"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "299"
+  - button "Add" [ref=e369]
+  - StaticText "🔥"
+  - heading "Punjabi Chaap" [level=3, ref=e370]
+  - paragraph
+    - StaticText "Chaap"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "299"
+  - button "Add" [ref=e371]
+  - StaticText "🍛"
+  - heading "Masala Chaap" [level=3, ref=e372]
+  - paragraph
+    - StaticText "Chaap"
+  - StaticText "H"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "240"
+  - button "Add" [ref=e373]
+  - StaticText "F"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "399"
+  - button "Add" [ref=e374]
+  - StaticText "🍛"
+  - heading "Kadhai Chaap" [level=3, ref=e375]
+  - paragraph
+    - StaticText "Chaap"
+  - StaticText "H"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "249"
+  - button "Add" [ref=e376]
+  - StaticText "F"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "399"
+  - button "Add" [ref=e377]
+  - StaticText "🍛"
+  - heading "Tawa Chaap" [level=3, ref=e378]
+  - paragraph
+    - StaticText "Chaap"
+  - StaticText "H"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "249"
+  - button "Add" [ref=e379]
+  - StaticText "F"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "399"
+  - button "Add" [ref=e380]
+  - StaticText "🍛"
+  - heading "Butter Chicken Chaap" [level=3, ref=e381]
+  - StaticText "★"
+  - paragraph
+    - StaticText "Veg-style"
+  - paragraph
+    - StaticText "Chaap"
+  - StaticText "H"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "279"
+  - button "Add" [ref=e382]
+  - StaticText "F"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "359"
+  - button "Add" [ref=e383]
+  - heading "Kabab" [level=3, ref=e384]
+  - StaticText "🔥"
+  - heading "Veg Seekh Kabab" [level=3, ref=e385]
+  - paragraph
+    - StaticText "Kabab"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "279"
+  - button "Add" [ref=e386]
+  - StaticText "🔥"
+  - heading "Hara Bhara Kabab" [level=3, ref=e387]
+  - paragraph
+    - StaticText "Kabab"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "349"
+  - button "Add" [ref=e388]
+  - StaticText "🔥"
+  - heading "Veg Lollipop" [level=3, ref=e389]
+  - paragraph
+    - StaticText "Kabab"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "249"
+  - button "Add" [ref=e390]
+  - heading "Platters" [level=3, ref=e391]
+  - StaticText "🔥"
+  - heading "Paneer Trio Platter" [level=3, ref=e392]
+  - StaticText "★"
+  - paragraph
+    - StaticText "Cheese Stuff Paneer Tikka, Tandoori Paneer Tikka, Malai Paneer Tikka"
+  - paragraph
+    - StaticText "Platters"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "649"
+  - button "Add" [ref=e393]
+  - StaticText "🔥"
+  - heading "Chaap Trio Platter" [level=3, ref=e394]
+  - paragraph
+    - StaticText "Malai Chaap, Veg Lollipop, Punjabi Chaap"
+  - paragraph
+    - StaticText "Platters"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "349"
+  - button "Add" [ref=e395]
+  - heading "Bread's" [level=3, ref=e396]
+  - StaticText "🔥"
+  - heading "Rumali Roti" [level=3, ref=e397]
+  - paragraph
+    - StaticText "Per pc"
+  - paragraph
+    - StaticText "Bread's"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "20"
+  - button "Add" [ref=e398]
+  - StaticText "🔥"
+  - heading "Tandoori Roti" [level=3, ref=e399]
+  - paragraph
+    - StaticText "Per pc"
+  - paragraph
+    - StaticText "Bread's"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "20"
+  - button "Add" [ref=e400]
+  - StaticText "🔥"
+  - heading "Butter Rumali Roti" [level=3, ref=e401]
+  - paragraph
+    - StaticText "Per pc"
+  - paragraph
+    - StaticText "Bread's"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "25"
+  - button "Add" [ref=e402]
+  - StaticText "🔥"
+  - heading "Butter Tandoori Roti" [level=3, ref=e403]
+  - paragraph
+    - StaticText "Per pc"
+  - paragraph
+    - StaticText "Bread's"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "25"
+  - button "Add" [ref=e404]
+  - StaticText "🔥"
+  - heading "Missi Roti" [level=3, ref=e405]
+  - paragraph
+    - StaticText "Per pc"
+  - paragraph
+    - StaticText "Bread's"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "49"
+  - button "Add" [ref=e406]
+  - heading "Naan" [level=3, ref=e407]
+  - StaticText "🔥"
+  - heading "Plain Naan" [level=3, ref=e408]
+  - paragraph
+    - StaticText "Per pc"
+  - paragraph
+    - StaticText "Naan"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "45"
+  - button "Add" [ref=e409]
+  - StaticText "🔥"
+  - heading "Butter Naan" [level=3, ref=e410]
+  - paragraph
+    - StaticText "Per pc"
+  - paragraph
+    - StaticText "Naan"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "49"
+  - button "Add" [ref=e411]
+  - StaticText "🔥"
+  - heading "Garlic Naan" [level=3, ref=e412]
+  - paragraph
+    - StaticText "Per pc"
+  - paragraph
+    - StaticText "Naan"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "59"
+  - button "Add" [ref=e413]
+  - StaticText "🔥"
+  - heading "Paneer Naan" [level=3, ref=e414]
+  - paragraph
+    - StaticText "Per pc"
+  - paragraph
+    - StaticText "Naan"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "89"
+  - button "Add" [ref=e415]
+  - StaticText "🔥"
+  - heading "Stuff Naan" [level=3, ref=e416]
+  - paragraph
+    - StaticText "Per pc"
+  - paragraph
+    - StaticText "Naan"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "79"
+  - button "Add" [ref=e417]
+  - heading "Parantha" [level=3, ref=e418]
+  - StaticText "🔥"
+  - heading "Laccha Parantha" [level=3, ref=e419]
+  - paragraph
+    - StaticText "Per pc"
+  - paragraph
+    - StaticText "Parantha"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "55"
+  - button "Add" [ref=e420]
+  - StaticText "🔥"
+  - heading "Masala Laccha Parantha" [level=3, ref=e421]
+  - paragraph
+    - StaticText "Per pc"
+  - paragraph
+    - StaticText "Parantha"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "59"
+  - button "Add" [ref=e422]
+  - heading "Veg" [level=3, ref=e423]
+  - StaticText "🍛"
+  - heading "Mix Veg" [level=3, ref=e424]
+  - paragraph
+    - StaticText "Veg"
+  - StaticText "H"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "279"
+  - button "Add" [ref=e425]
+  - StaticText "F"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "339"
+  - button "Add" [ref=e426]
+  - StaticText "🍛"
+  - heading "Kashmiri Dum Aloo" [level=3, ref=e427]
+  - paragraph
+    - StaticText "Veg"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "299"
+  - button "Add" [ref=e428]
+  - StaticText "🍛"
+  - heading "Matar Mushroom" [level=3, ref=e429]
+  - paragraph
+    - StaticText "Veg"
+  - StaticText "H"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "279"
+  - button "Add" [ref=e430]
+  - StaticText "F"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "359"
+  - button "Add" [ref=e431]
+  - StaticText "🍛"
+  - heading "Creamy Mushroom" [level=3, ref=e432]
+  - paragraph
+    - StaticText "Veg"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "349"
+  - button "Add" [ref=e433]
+  - StaticText "🍛"
+  - heading "Aloo Jeera" [level=3, ref=e434]
+  - paragraph
+    - StaticText "Veg"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "199"
+  - button "Add" [ref=e435]
+  - heading "Paneer" [level=3, ref=e436]
+  - StaticText "🍛"
+  - heading "Shahi Paneer" [level=3, ref=e437]
+  - paragraph
+    - StaticText "Paneer"
+  - StaticText "H"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "229"
+  - button "Add" [ref=e438]
+  - StaticText "F"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "299"
+  - button "Add" [ref=e439]
+  - StaticText "🍛"
+  - heading "Handi Paneer" [level=3, ref=e440]
+  - paragraph
+    - StaticText "Paneer"
+  - StaticText "H"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "249"
+  - button "Add" [ref=e441]
+  - StaticText "F"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "339"
+  - button "Add" [ref=e442]
+  - StaticText "🍛"
+  - heading "Kadhai Paneer" [level=3, ref=e443]
+  - StaticText "★"
+  - paragraph
+    - StaticText "Paneer"
+  - StaticText "H"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "249"
+  - button "Add" [ref=e444]
+  - StaticText "F"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "339"
+  - button "Add" [ref=e445]
+  - StaticText "🍛"
+  - heading "Paneer Lababdar" [level=3, ref=e446]
+  - paragraph
+    - StaticText "Paneer"
+  - StaticText "H"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "269"
+  - button "Add" [ref=e447]
+  - StaticText "F"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "349"
+  - button "Add" [ref=e448]
+  - StaticText "🍛"
+  - heading "Paneer Butter Masala" [level=3, ref=e449]
+  - StaticText "★"
+  - paragraph
+    - StaticText "Paneer"
+  - StaticText "H"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "249"
+  - button "Add" [ref=e450]
+  - StaticText "F"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "339"
+  - button "Add" [ref=e451]
+  - StaticText "🍛"
+  - heading "Paneer Changezi" [level=3, ref=e452]
+  - paragraph
+    - StaticText "Paneer"
+  - StaticText "H"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "299"
+  - button "Add" [ref=e453]
+  - StaticText "F"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "349"
+  - button "Add" [ref=e454]
+  - heading "Raita" [level=3, ref=e455]
+  - StaticText "🍛"
+  - heading "Plain Curd" [level=3, ref=e456]
+  - paragraph
+    - StaticText "Raita"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "99"
+  - button "Add" [ref=e457]
+  - StaticText "🍛"
+  - heading "Boondi Raita" [level=3, ref=e458]
+  - paragraph
+    - StaticText "Raita"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "129"
+  - button "Add" [ref=e459]
+  - StaticText "🍛"
+  - heading "Cucumber Raita" [level=3, ref=e460]
+  - paragraph
+    - StaticText "Raita"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "149"
+  - button "Add" [ref=e461]
+  - StaticText "🍛"
+  - heading "Mix Veg Raita" [level=3, ref=e462]
+  - paragraph
+    - StaticText "Raita"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "169"
+  - button "Add" [ref=e463]
+  - heading "Salad" [level=3, ref=e464]
+  - StaticText "🍛"
+  - heading "Green Salad" [level=3, ref=e465]
+  - paragraph
+    - StaticText "Salad"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "129"
+  - button "Add" [ref=e466]
+  - StaticText "🍛"
+  - heading "Cucumber Salad" [level=3, ref=e467]
+  - paragraph
+    - StaticText "Salad"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "89"
+  - button "Add" [ref=e468]
+  - StaticText "🍛"
+  - heading "Onion Salad" [level=3, ref=e469]
+  - paragraph
+    - StaticText "Salad"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "69"
+  - button "Add" [ref=e470]
+  - heading "Rice" [level=3, ref=e471]
+  - StaticText "🍛"
+  - heading "Steam Rice" [level=3, ref=e472]
+  - paragraph
+    - StaticText "Rice"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "149"
+  - button "Add" [ref=e473]
+  - StaticText "🍛"
+  - heading "Jeera Rice" [level=3, ref=e474]
+  - paragraph
+    - StaticText "Rice"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "179"
+  - button "Add" [ref=e475]
+  - StaticText "🍛"
+  - heading "Veg Biryani" [level=3, ref=e476]
+  - StaticText "★"
+  - paragraph
+    - StaticText "Rice"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "249"
+  - button "Add" [ref=e477]
+  - heading "Dal" [level=3, ref=e478]
+  - StaticText "🍛"
+  - heading "Dal Makhni" [level=3, ref=e479]
+  - paragraph
+    - StaticText "Dal"
+  - StaticText "H"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "199"
+  - button "Add" [ref=e480]
+  - StaticText "F"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "259"
+  - button "Add" [ref=e481]
+  - StaticText "🍛"
+  - heading "Dal Tadka" [level=3, ref=e482]
+  - paragraph
+    - StaticText "Dal"
+  - StaticText "H"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "179"
+  - button "Add" [ref=e483]
+  - StaticText "F"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "249"
+  - button "Add" [ref=e484]
+  - StaticText "🍛"
+  - heading "Dal Handi" [level=3, ref=e485]
+  - paragraph
+    - StaticText "Dal"
+  - StaticText "H"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "219"
+  - button "Add" [ref=e486]
+  - StaticText "F"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "319"
+  - button "Add" [ref=e487]
+  - heading "Special Platter" [level=3, ref=e488]
+  - StaticText "🍛"
+  - heading "Flavour's Special Platter" [level=3, ref=e489]
+  - StaticText "★"
+  - paragraph
+    - StaticText "Mushroom Malai Tikka, Malai Broccoli, Cheese Stuff Paneer Tikka, Hara Bhara Kabab"
+  - paragraph
+    - StaticText "Special Platter"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "849"
+  - button "Add" [ref=e490]
+  - heading "Desserts" [level=3, ref=e491]
+  - StaticText "🍨"
+  - heading "Gulaab Jamun" [level=3, ref=e492]
+  - paragraph
+    - StaticText "Desserts"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "39"
+  - button "Add" [ref=e493]
+  - StaticText "🍨"
+  - heading "Brownie Fudge" [level=3, ref=e494]
+  - paragraph
+    - StaticText "Desserts"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "119"
+  - button "Add" [ref=e495]
+  - StaticText "🍨"
+  - heading "Brownie Ice-Cream Fudge" [level=3, ref=e496]
+  - StaticText "★"
+  - paragraph
+    - StaticText "Desserts"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "179"
+  - button "Add" [ref=e497]
+  - StaticText "🍨"
+  - heading "Melting Jamun Fantasy" [level=3, ref=e498]
+  - paragraph
+    - StaticText "Desserts"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "99"
+  - button "Add" [ref=e499]
+  - StaticText "🍨"
+  - heading "Rajasthani Sweet Toast" [level=3, ref=e500]
+  - paragraph
+    - StaticText "Desserts"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "79"
+  - button "Add" [ref=e501]
+  - StaticText "🍨"
+  - heading "Gajar Halwa" [level=3, ref=e502]
+  - paragraph
+    - StaticText "Seasonal"
+  - paragraph
+    - StaticText "Desserts"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "149"
+  - button "Add" [ref=e503]
+  - StaticText "🍨"
+  - heading "Choco Lava" [level=3, ref=e504]
+  - StaticText "★"
+  - paragraph
+    - StaticText "Desserts"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "99"
+  - button "Add" [ref=e505]
+  - heading "Ice Cream" [level=3, ref=e506]
+  - StaticText "🍨"
+  - heading "Vanilla Ice Cream" [level=3, ref=e507]
+  - paragraph
+    - StaticText "Ice Cream"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "59"
+  - button "Add" [ref=e508]
+  - StaticText "🍨"
+  - heading "Strawberry Ice Cream" [level=3, ref=e509]
+  - paragraph
+    - StaticText "Ice Cream"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "59"
+  - button "Add" [ref=e510]
+  - StaticText "🍨"
+  - heading "Chocolate Ice Cream" [level=3, ref=e511]
+  - paragraph
+    - StaticText "Ice Cream"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "79"
+  - button "Add" [ref=e512]
+  - StaticText "🍨"
+  - heading "Butterscotch Ice Cream" [level=3, ref=e513]
+  - paragraph
+    - StaticText "Ice Cream"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "79"
+  - button "Add" [ref=e514]
+  - StaticText "🍨"
+  - heading "Kit-Kat Ice Cream" [level=3, ref=e515]
+  - paragraph
+    - StaticText "Ice Cream"
+  - StaticText "Regular"
+  - StaticText ":"
+  - StaticText "₹"
+  - StaticText "99"
+  - button "Add" [ref=e516]
+- contentinfo
+  - paragraph
+    - StaticText "🎉 We're available for all parties & celebrations!"
+    - link "Book Now" [ref=e547]
+  - StaticText "FF"
+  - heading "FLAVOURS FOOD" [level=3, ref=e517]
+  - paragraph
+    - StaticText "HAPPINESS IS FLAVOURS"
+  - paragraph
+    - StaticText "Unlimited choice under one roof. Crafted with love, served with a smile."
+  - heading "Quick Links" [level=4, ref=e518]
+  - list
+    - listitem [level=1]
+      - link "Our Menu" [ref=e548]
+    - listitem [level=1]
+      - link "Reserve Table" [ref=e549]
+    - listitem [level=1]
+      - link "Gallery" [ref=e550]
+    - listitem [level=1]
+      - link "Contact Us" [ref=e551]
+    - listitem [level=1]
+      - link "My Account" [ref=e552]
+    - listitem [level=1]
+      - link "Admin Panel" [ref=e553]
+  - heading "Contact Us" [level=4, ref=e519]
+  - list
+    - listitem [level=1]
+      - StaticText "Pillar No. 834, Ground Floor, Near IGL CNG Pump, AsalatNagar, Muradnagar, UP"
+    - listitem [level=1]
+      - link "+91-7817878595" [ref=e554]
+    - listitem [level=1]
+      - link "flavoursfood2023@gmail.com" [ref=e555]
+    - listitem [level=1]
+      - StaticText "11:00 AM – 10:00 PM (Daily)"
+  - heading "Follow Us" [level=4, ref=e520]
+  - link [ref=e521]
+  - link "WA" [ref=e522]
+  - Iframe "Flavours Food Location" [ref=e523]
+    - link "Maps (opens in new tab)" [ref=e557]
+      - StaticText "Maps"
+      - image
+  - paragraph
+    - StaticText "© 2026 Flavours Food. All rights reserved."
+  - paragraph
+    - StaticText "Crafted with love, served with a smile"
+  - link "Chat on WhatsApp" [ref=e524]
+    - image
+- region "Notifications alt+T" [ref=e1]
+- button "Open Next.js Dev Tools" [expanded=false, ref=e556]
+  - image
+- alert

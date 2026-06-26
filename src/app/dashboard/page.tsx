@@ -1,0 +1,137 @@
+'use client';
+
+import { useState, useEffect, useCallback } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
+import { Package, User, Heart, MapPin, LogOut, ShoppingBag } from 'lucide-react';
+import { toast } from 'sonner';
+
+interface UserData {
+  id: string;
+  name: string;
+  email: string;
+  phone: string | null;
+  role: string;
+}
+
+export default function DashboardPage() {
+  const [user, setUser] = useState<UserData | null>(null);
+  const router = useRouter();
+
+  const loadUser = useCallback(() => {
+    const stored = localStorage.getItem('flavours-user');
+    if (stored) {
+      try { return JSON.parse(stored) as UserData; } catch { return null; }
+    }
+    return null;
+  }, []);
+
+  useEffect(() => {
+    const u = loadUser();
+    if (u) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setUser(u);
+    } else {
+      router.push('/login');
+    }
+  }, [router, loadUser]);
+
+  const handleLogout = () => {
+    localStorage.removeItem('flavours-user');
+    toast.success('Logged out');
+    router.push('/');
+  };
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-brand-cream flex items-center justify-center">
+        <p className="text-muted-foreground">Loading...</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-brand-cream">
+      <div className="bg-brand-dark py-8 px-4">
+        <div className="max-w-5xl mx-auto">
+          <h1 className="text-2xl font-bold text-brand-cream">My Dashboard</h1>
+          <p className="text-brand-tan/70 text-sm">Welcome back, {user.name}!</p>
+        </div>
+      </div>
+
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
+        {/* Quick Actions */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
+          {[
+            { icon: ShoppingBag, label: 'Order Now', href: '/menu', color: 'bg-brand-maroon' },
+            { icon: Package, label: 'My Orders', href: '/dashboard/orders', color: 'bg-brand-dark' },
+            { icon: Heart, label: 'Wishlist', href: '/dashboard/wishlist', color: 'bg-brand-red' },
+            { icon: MapPin, label: 'Addresses', href: '/dashboard/addresses', color: 'bg-brand-green' },
+          ].map((action) => (
+            <Link key={action.label} href={action.href}>
+              <Card className="border-brand-tan/20 hover:shadow-md transition-shadow cursor-pointer">
+                <CardContent className="p-4 text-center">
+                  <div className={`w-10 h-10 ${action.color} rounded-full flex items-center justify-center mx-auto mb-2`}>
+                    <action.icon className="w-5 h-5 text-white" />
+                  </div>
+                  <p className="text-sm font-medium text-brand-dark">{action.label}</p>
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
+        </div>
+
+        {/* Profile */}
+        <Card className="border-brand-tan/20 mb-6">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle className="text-brand-dark flex items-center gap-2">
+              <User className="w-5 h-5 text-brand-maroon" />
+              Profile
+            </CardTitle>
+            <Button variant="ghost" size="sm" onClick={handleLogout} className="text-muted-foreground">
+              <LogOut className="w-4 h-4 mr-1" /> Logout
+            </Button>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <p className="text-xs text-muted-foreground">Name</p>
+                <p className="font-medium text-brand-dark">{user.name}</p>
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Email</p>
+                <p className="font-medium text-brand-dark">{user.email}</p>
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Phone</p>
+                <p className="font-medium text-brand-dark">{user.phone || 'Not set'}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Recent Orders Preview */}
+        <Card className="border-brand-tan/20">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle className="text-brand-dark flex items-center gap-2">
+              <Package className="w-5 h-5 text-brand-maroon" />
+              Recent Orders
+            </CardTitle>
+            <Link href="/dashboard/orders">
+              <Button variant="ghost" size="sm" className="text-brand-maroon">View All</Button>
+            </Link>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground text-center py-6">
+              Your order history will appear here once you place your first order.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}

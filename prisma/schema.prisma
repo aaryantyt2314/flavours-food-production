@@ -1,0 +1,231 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ─── User & Auth ────────────────────────────────────────────
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  phone         String?
+  password      String
+  role          String    @default("customer") // "customer" | "admin"
+  addresses     Address[]
+  orders        Order[]
+  reviews       Review[]
+  wishlistItems WishlistItem[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Address {
+  id       String  @id @default(cuid())
+  userId   String
+  user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  label    String  // "Home", "Office", etc.
+  street   String
+  city     String  @default("Muradnagar")
+  state    String  @default("Uttar Pradesh")
+  pincode  String?
+  isDefault Boolean @default(false)
+  orders   Order[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ─── Menu ───────────────────────────────────────────────────
+
+model Category {
+  id        String     @id @default(cuid())
+  name      String     @unique
+  slug      String     @unique
+  order     Int        @default(0)
+  image     String?
+  items     MenuItem[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model MenuItem {
+  id          String    @id @default(cuid())
+  name        String
+  description String?
+  categoryId  String
+  category    Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  subCategory String?   // e.g., "Noodles", "Soups", "Rolls" within Chinese
+  isVeg       Boolean   @default(true)
+  isAvailable Boolean   @default(true)
+  image       String?
+  // Pricing: stored as JSON string like '{"Normal":99,"Crinkle":149}' or '{"M":299,"L":339}' or '{"H":279,"F":339}' or single price
+  prices      String    @default("{}") // JSON string
+  priceLabel  String?   // "Normal/Crinkle", "M/L", "H/F", null for single price
+  order       Int       @default(0)
+  isFeatured  Boolean   @default(false)
+  reviews     Review[]
+  wishlistItems WishlistItem[]
+  orderItems  OrderItem[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+// ─── Orders ─────────────────────────────────────────────────
+
+model Order {
+  id              String      @id @default(cuid())
+  userId          String
+  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items           OrderItem[]
+  addressId       String?
+  address         Address?    @relation(fields: [addressId], references: [id])
+  subtotal        Float
+  discount        Float       @default(0)
+  total           Float
+  status          String      @default("Placed") // Placed | Confirmed | Preparing | Out for Delivery | Ready | Completed | Cancelled
+  paymentMethod   String      @default("razorpay") // razorpay | cod
+  paymentStatus   String      @default("pending") // pending | paid | failed | refunded
+  razorpayOrderId String?
+  razorpayPaymentId String?
+  razorpaySignature String?
+  couponCode      String?
+  notes           String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+}
+
+model OrderItem {
+  id         String   @id @default(cuid())
+  orderId    String
+  order      Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  menuItemId String
+  menuItem   MenuItem @relation(fields: [menuItemId], references: [id])
+  name       String   // snapshot of name at order time
+  price      Float    // snapshot of price at order time
+  priceTier  String?  // e.g., "M", "L", "Normal", "Crinkle"
+  quantity   Int      @default(1)
+}
+
+// ─── Reservations & Inquiries ───────────────────────────────
+
+model Reservation {
+  id            String   @id @default(cuid())
+  name          String
+  phone         String
+  email         String?
+  date          String   // ISO date string
+  time          String
+  partySize     Int
+  specialRequests String?
+  status        String   @default("pending") // pending | confirmed | cancelled | completed
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model ContactInquiry {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  subject   String?
+  message   String
+  status    String   @default("new") // new | read | replied | closed
+  reply     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ─── Reviews ────────────────────────────────────────────────
+
+model Review {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  menuItemId String?
+  menuItem  MenuItem? @relation(fields: [menuItemId], references: [id], onDelete: SetNull)
+  orderId   String?   // link to order
+  rating    Int       // 1-5
+  comment   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model WishlistItem {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  menuItemId String
+  menuItem  MenuItem @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, menuItemId])
+}
+
+// ─── Coupons ────────────────────────────────────────────────
+
+model Coupon {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  type        String   // "percentage" | "flat"
+  value       Float
+  minOrder    Float    @default(0)
+  maxDiscount Float?   // for percentage coupons
+  usageLimit  Int?
+  usedCount   Int      @default(0)
+  expiresAt   DateTime?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ─── Content Management ─────────────────────────────────────
+
+model Banner {
+  id        String   @id @default(cuid())
+  title     String
+  subtitle  String?
+  image     String?
+  link      String?
+  isActive  Boolean  @default(true)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Testimonial {
+  id        String   @id @default(cuid())
+  name      String
+  rating    Int      @default(5)
+  comment   String
+  image     String?
+  isActive  Boolean  @default(true)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model GalleryImage {
+  id        String   @id @default(cuid())
+  title     String?
+  image     String
+  category  String?  // "interior", "food", "events"
+  isActive  Boolean  @default(true)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ─── Site Settings ──────────────────────────────────────────
+
+model SiteSetting {
+  id    String @id @default(cuid())
+  key   String @unique
+  value String
+}
