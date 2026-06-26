@@ -14,6 +14,9 @@ import {
   CreditCard, CalendarDays, ArrowLeft, Plus, Edit, Trash2, Eye, Search, ChefHat
 } from 'lucide-react';
 import { toast } from 'sonner';
+import AdminReports from '@/components/admin/AdminReports';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
 
 const sidebarItems = [
   { icon: LayoutDashboard, label: 'Dashboard', section: 'dashboard' },
@@ -43,6 +46,9 @@ export default function AdminDashboard() {
   const [inquiries, setInquiries] = useState<any[]>([]);
   const [coupons, setCoupons] = useState<any[]>([]);
   const [orderStatusFilter, setOrderStatusFilter] = useState('all');
+  const [menuDialogOpen, setMenuDialogOpen] = useState(false);
+  const [newItemForm, setNewItemForm] = useState({ name: '', description: '', prices: '{"Regular":0}', categoryId: '', subCategory: '', isVeg: true, isFeatured: false });
+  const [categories, setCategories] = useState<any[]>([]);
 
   const loadAllData = useCallback(async () => {
     try {
@@ -77,6 +83,32 @@ export default function AdminDashboard() {
       console.error('Failed to load admin data:', error);
     }
   }, []);
+
+  // Load categories for the menu dialog
+  useEffect(() => {
+    fetch('/api/categories').then(r => r.json()).then(data => setCategories(data)).catch(() => {});
+  }, []);
+
+  const handleCreateMenuItem = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const res = await fetch('/api/admin/menu', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newItemForm),
+      });
+      if (res.ok) {
+        toast.success('Menu item created!');
+        setMenuDialogOpen(false);
+        loadAllData();
+      } else {
+        const data = await res.json();
+        toast.error(data.error || 'Failed to create item');
+      }
+    } catch {
+      toast.error('Failed to create item');
+    }
+  };
 
   useEffect(() => {
     const stored = localStorage.getItem('flavours-user');
@@ -370,6 +402,59 @@ export default function AdminDashboard() {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-semibold text-brand-dark">Menu Management ({menuItems.length} items)</h2>
+                <Dialog open={menuDialogOpen} onOpenChange={setMenuDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button className="bg-brand-maroon hover:bg-brand-dark text-white" onClick={() => setNewItemForm({ name: '', description: '', prices: '{"Regular":0}', categoryId: '', subCategory: '', isVeg: true, isFeatured: false })}>
+                      <Plus className="w-4 h-4 mr-2" /> Add Item
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-md">
+                    <DialogHeader>
+                      <DialogTitle className="text-brand-dark">Add Menu Item</DialogTitle>
+                    </DialogHeader>
+                    <form onSubmit={handleCreateMenuItem} className="space-y-3">
+                      <div>
+                        <Label className="text-xs">Name *</Label>
+                        <Input value={newItemForm.name} onChange={(e) => setNewItemForm({...newItemForm, name: e.target.value})} required className="border-brand-tan/30" />
+                      </div>
+                      <div>
+                        <Label className="text-xs">Description</Label>
+                        <Input value={newItemForm.description} onChange={(e) => setNewItemForm({...newItemForm, description: e.target.value})} className="border-brand-tan/30" />
+                      </div>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <Label className="text-xs">Category *</Label>
+                          <Select value={newItemForm.categoryId} onValueChange={(v) => setNewItemForm({...newItemForm, categoryId: v})}>
+                            <SelectTrigger className="border-brand-tan/30"><SelectValue placeholder="Select" /></SelectTrigger>
+                            <SelectContent>
+                              {categories.filter((c: any) => c.id).map((c: any) => (
+                                <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
+                          <Label className="text-xs">Sub-Category</Label>
+                          <Input value={newItemForm.subCategory} onChange={(e) => setNewItemForm({...newItemForm, subCategory: e.target.value})} className="border-brand-tan/30" />
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-xs">Prices (JSON) *</Label>
+                        <Input value={newItemForm.prices} onChange={(e) => setNewItemForm({...newItemForm, prices: e.target.value})} required placeholder='{"Regular":199}' className="border-brand-tan/30 font-mono text-xs" />
+                        <p className="text-[10px] text-muted-foreground mt-1">{'Format: {"Regular":199} or {"M":299,"L":399}'}</p>
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <label className="flex items-center gap-2 text-xs">
+                          <input type="checkbox" checked={newItemForm.isVeg} onChange={(e) => setNewItemForm({...newItemForm, isVeg: e.target.checked})} /> Veg
+                        </label>
+                        <label className="flex items-center gap-2 text-xs">
+                          <input type="checkbox" checked={newItemForm.isFeatured} onChange={(e) => setNewItemForm({...newItemForm, isFeatured: e.target.checked})} /> Featured
+                        </label>
+                      </div>
+                      <Button type="submit" className="w-full bg-brand-maroon hover:bg-brand-dark text-white">Create Item</Button>
+                    </form>
+                  </DialogContent>
+                </Dialog>
               </div>
               <div className="overflow-x-auto">
                 <Table>
@@ -380,6 +465,7 @@ export default function AdminDashboard() {
                       <TableHead>Price</TableHead>
                       <TableHead>Available</TableHead>
                       <TableHead>Featured</TableHead>
+                      <TableHead>Delete</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -407,6 +493,11 @@ export default function AdminDashboard() {
                           <Badge variant={item.isFeatured ? 'default' : 'outline'} className="text-[10px]">
                             {item.isFeatured ? '★' : '—'}
                           </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Button variant="ghost" size="icon" className="h-7 w-7 text-red-500" onClick={async () => { await fetch(`/api/admin/menu?id=${item.id}`, { method: 'DELETE' }); toast.success('Item deleted'); loadAllData(); }}>
+                            <Trash2 className="w-3 h-3" />
+                          </Button>
                         </TableCell>
                       </TableRow>
                     ))}
@@ -561,35 +652,7 @@ export default function AdminDashboard() {
           )}
 
           {/* Reports Section */}
-          {activeSection === 'reports' && (
-            <div className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Analytics Overview</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div className="text-center p-4 bg-blue-50 rounded-lg">
-                      <p className="text-2xl font-bold text-blue-600">{stats.orders}</p>
-                      <p className="text-xs text-muted-foreground">Total Orders</p>
-                    </div>
-                    <div className="text-center p-4 bg-green-50 rounded-lg">
-                      <p className="text-2xl font-bold text-green-600">₹{stats.revenue.toLocaleString()}</p>
-                      <p className="text-xs text-muted-foreground">Total Revenue</p>
-                    </div>
-                    <div className="text-center p-4 bg-purple-50 rounded-lg">
-                      <p className="text-2xl font-bold text-purple-600">₹{stats.orders > 0 ? Math.round(stats.revenue / stats.orders) : 0}</p>
-                      <p className="text-xs text-muted-foreground">Avg Order Value</p>
-                    </div>
-                    <div className="text-center p-4 bg-orange-50 rounded-lg">
-                      <p className="text-2xl font-bold text-orange-600">{stats.items}</p>
-                      <p className="text-xs text-muted-foreground">Menu Items</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          )}
+          {activeSection === 'reports' && <AdminReports />}
 
           {/* Payments Section */}
           {activeSection === 'payments' && (

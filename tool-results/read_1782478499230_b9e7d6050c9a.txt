@@ -1,0 +1,616 @@
+     1→'use client';
+     2→
+     3→import { useState, useEffect, useCallback } from 'react';
+     4→import { useRouter } from 'next/navigation';
+     5→import Link from 'next/link';
+     6→import { Button } from '@/components/ui/button';
+     7→import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+     8→import { Input } from '@/components/ui/input';
+     9→import { Badge } from '@/components/ui/badge';
+    10→import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+    11→import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+    12→import {
+    13→  LayoutDashboard, UtensilsCrossed, Package, Users, Tag, Image, MessageSquare, BarChart3,
+    14→  CreditCard, CalendarDays, ArrowLeft, Plus, Edit, Trash2, Eye, Search, ChefHat
+    15→} from 'lucide-react';
+    16→import { toast } from 'sonner';
+    17→import AdminReports from '@/components/admin/AdminReports';
+    18→
+    19→const sidebarItems = [
+    20→  { icon: LayoutDashboard, label: 'Dashboard', section: 'dashboard' },
+    21→  { icon: UtensilsCrossed, label: 'Menu', section: 'menu' },
+    22→  { icon: Package, label: 'Orders', section: 'orders' },
+    23→  { icon: Users, label: 'Customers', section: 'customers' },
+    24→  { icon: Tag, label: 'Coupons', section: 'coupons' },
+    25→  { icon: Image, label: 'Banners', section: 'banners' },
+    26→  { icon: MessageSquare, label: 'Inquiries', section: 'inquiries' },
+    27→  { icon: CalendarDays, label: 'Reservations', section: 'reservations' },
+    28→  { icon: BarChart3, label: 'Reports', section: 'reports' },
+    29→  { icon: CreditCard, label: 'Payments', section: 'payments' },
+    30→];
+    31→
+    32→export default function AdminDashboard() {
+    33→  const [activeSection, setActiveSection] = useState('dashboard');
+    34→  const [user, setUser] = useState<any>(null);
+    35→  const [mobileSidebar, setMobileSidebar] = useState(false);
+    36→  const router = useRouter();
+    37→
+    38→  // Data states
+    39→  const [stats, setStats] = useState({ orders: 0, revenue: 0, customers: 0, items: 0 });
+    40→  const [orders, setOrders] = useState<any[]>([]);
+    41→  const [menuItems, setMenuItems] = useState<any[]>([]);
+    42→  const [customers, setCustomers] = useState<any[]>([]);
+    43→  const [reservations, setReservations] = useState<any[]>([]);
+    44→  const [inquiries, setInquiries] = useState<any[]>([]);
+    45→  const [coupons, setCoupons] = useState<any[]>([]);
+    46→  const [orderStatusFilter, setOrderStatusFilter] = useState('all');
+    47→
+    48→  const loadAllData = useCallback(async () => {
+    49→    try {
+    50→      const [ordersRes, menuRes, customersRes, reservationsRes, inquiriesRes, couponsRes] = await Promise.all([
+    51→        fetch('/api/admin/orders'),
+    52→        fetch('/api/menu'),
+    53→        fetch('/api/admin/customers'),
+    54→        fetch('/api/reservations'),
+    55→        fetch('/api/contacts'),
+    56→        fetch('/api/admin/coupons'),
+    57→      ]);
+    58→
+    59→      const [ordersData, menuData, customersData, reservationsData, inquiriesData, couponsData] = await Promise.all([
+    60→        ordersRes.json(), menuRes.json(), customersRes.json(), reservationsRes.json(), inquiriesRes.json(), couponsRes.json(),
+    61→      ]);
+    62→
+    63→      setOrders(ordersData);
+    64→      setMenuItems(menuData);
+    65→      setCustomers(customersData);
+    66→      setReservations(reservationsData);
+    67→      setInquiries(inquiriesData);
+    68→      setCoupons(couponsData);
+    69→
+    70→      const totalRevenue = ordersData.reduce((sum: number, o: any) => sum + (o.total || 0), 0);
+    71→      setStats({
+    72→        orders: ordersData.length,
+    73→        revenue: totalRevenue,
+    74→        customers: customersData.length,
+    75→        items: menuData.length,
+    76→      });
+    77→    } catch (error) {
+    78→      console.error('Failed to load admin data:', error);
+    79→    }
+    80→  }, []);
+    81→
+    82→  useEffect(() => {
+    83→    const stored = localStorage.getItem('flavours-user');
+    84→    if (stored) {
+    85→      try {
+    86→        const u = JSON.parse(stored);
+    87→        if (u.role !== 'admin') {
+    88→          toast.error('Admin access required');
+    89→          router.push('/login');
+    90→          return;
+    91→        }
+    92→        // eslint-disable-next-line react-hooks/set-state-in-effect
+    93→        setUser(u);
+    94→        loadAllData();
+    95→      } catch {}
+    96→    } else {
+    97→      router.push('/login');
+    98→    }
+    99→  }, [router, loadAllData]);
+   100→
+   101→  const updateOrderStatus = async (orderId: string, status: string) => {
+   102→    try {
+   103→      const res = await fetch('/api/admin/orders', {
+   104→        method: 'PATCH',
+   105→        headers: { 'Content-Type': 'application/json' },
+   106→        body: JSON.stringify({ orderId, status }),
+   107→      });
+   108→      if (res.ok) {
+   109→        toast.success('Order status updated');
+   110→        loadAllData();
+   111→      }
+   112→    } catch {
+   113→      toast.error('Failed to update order');
+   114→    }
+   115→  };
+   116→
+   117→  const toggleMenuAvailability = async (itemId: string, isAvailable: boolean) => {
+   118→    try {
+   119→      const res = await fetch('/api/admin/menu', {
+   120→        method: 'PATCH',
+   121→        headers: { 'Content-Type': 'application/json' },
+   122→        body: JSON.stringify({ itemId, isAvailable: !isAvailable }),
+   123→      });
+   124→      if (res.ok) {
+   125→        toast.success('Menu item updated');
+   126→        loadAllData();
+   127→      }
+   128→    } catch {
+   129→      toast.error('Failed to update menu item');
+   130→    }
+   131→  };
+   132→
+   133→  const statusColors: Record<string, string> = {
+   134→    'Placed': 'bg-yellow-100 text-yellow-800',
+   135→    'Confirmed': 'bg-blue-100 text-blue-800',
+   136→    'Preparing': 'bg-orange-100 text-orange-800',
+   137→    'Out for Delivery': 'bg-purple-100 text-purple-800',
+   138→    'Ready': 'bg-green-100 text-green-800',
+   139→    'Completed': 'bg-green-200 text-green-900',
+   140→    'Cancelled': 'bg-red-100 text-red-800',
+   141→  };
+   142→
+   143→  if (!user) {
+   144→    return <div className="min-h-screen bg-brand-cream flex items-center justify-center"><p>Loading...</p></div>;
+   145→  }
+   146→
+   147→  return (
+   148→    <div className="min-h-screen bg-gray-50 flex">
+   149→      {/* Sidebar - Desktop */}
+   150→      <aside className="hidden lg:flex flex-col w-64 bg-brand-dark text-brand-cream min-h-screen">
+   151→        <div className="p-4 border-b border-brand-maroon/50">
+   152→          <div className="flex items-center gap-2">
+   153→            <div className="w-8 h-8 rounded-full bg-brand-red flex items-center justify-center">
+   154→              <span className="text-white font-bold text-xs">FF</span>
+   155→            </div>
+   156→            <div>
+   157→              <p className="font-bold text-sm">Admin Panel</p>
+   158→              <p className="text-[10px] text-brand-tan/60">Flavours Food</p>
+   159→            </div>
+   160→          </div>
+   161→        </div>
+   162→        <nav className="flex-1 p-2 space-y-1 overflow-y-auto">
+   163→          {sidebarItems.map((item) => (
+   164→            <button
+   165→              key={item.section}
+   166→              onClick={() => setActiveSection(item.section)}
+   167→              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
+   168→                activeSection === item.section
+   169→                  ? 'bg-brand-maroon text-white'
+   170→                  : 'text-brand-cream/70 hover:bg-brand-maroon/30 hover:text-white'
+   171→              }`}
+   172→            >
+   173→              <item.icon className="w-4 h-4" />
+   174→              {item.label}
+   175→            </button>
+   176→          ))}
+   177→        </nav>
+   178→        <div className="p-4 border-t border-brand-maroon/50">
+   179→          <Link href="/">
+   180→            <Button variant="ghost" size="sm" className="text-brand-cream/70 hover:text-white w-full">
+   181→              <ArrowLeft className="w-4 h-4 mr-2" /> Back to Site
+   182→            </Button>
+   183→          </Link>
+   184→        </div>
+   185→      </aside>
+   186→
+   187→      {/* Mobile Sidebar */}
+   188→      {mobileSidebar && (
+   189→        <div className="fixed inset-0 z-50 lg:hidden">
+   190→          <div className="absolute inset-0 bg-black/50" onClick={() => setMobileSidebar(false)} />
+   191→          <aside className="absolute left-0 top-0 bottom-0 w-64 bg-brand-dark text-brand-cream">
+   192→            <div className="p-4 border-b border-brand-maroon/50 flex items-center justify-between">
+   193→              <p className="font-bold">Admin Panel</p>
+   194→              <Button variant="ghost" size="icon" className="text-brand-cream" onClick={() => setMobileSidebar(false)}>
+   195→                ✕
+   196→              </Button>
+   197→            </div>
+   198→            <nav className="p-2 space-y-1">
+   199→              {sidebarItems.map((item) => (
+   200→                <button
+   201→                  key={item.section}
+   202→                  onClick={() => { setActiveSection(item.section); setMobileSidebar(false); }}
+   203→                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm ${
+   204→                    activeSection === item.section ? 'bg-brand-maroon text-white' : 'text-brand-cream/70'
+   205→                  }`}
+   206→                >
+   207→                  <item.icon className="w-4 h-4" />
+   208→                  {item.label}
+   209→                </button>
+   210→              ))}
+   211→            </nav>
+   212→          </aside>
+   213→        </div>
+   214→      )}
+   215→
+   216→      {/* Main Content */}
+   217→      <main className="flex-1 min-w-0">
+   218→        {/* Top Bar */}
+   219→        <header className="bg-white border-b px-4 py-3 flex items-center justify-between sticky top-0 z-40">
+   220→          <div className="flex items-center gap-3">
+   221→            <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setMobileSidebar(true)}>
+   222→              <ChefHat className="w-5 h-5" />
+   223→            </Button>
+   224→            <h1 className="text-lg font-semibold text-brand-dark capitalize">{activeSection}</h1>
+   225→          </div>
+   226→          <div className="flex items-center gap-2">
+   227→            <Badge className="bg-brand-maroon text-white">Admin</Badge>
+   228→            <span className="text-sm text-muted-foreground hidden sm:inline">{user.name}</span>
+   229→          </div>
+   230→        </header>
+   231→
+   232→        <div className="p-4 sm:p-6">
+   233→          {/* Dashboard Section */}
+   234→          {activeSection === 'dashboard' && (
+   235→            <div className="space-y-6">
+   236→              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+   237→                {[
+   238→                  { label: 'Total Orders', value: stats.orders, icon: Package, color: 'text-blue-600 bg-blue-50' },
+   239→                  { label: 'Revenue', value: `₹${stats.revenue.toLocaleString()}`, icon: CreditCard, color: 'text-green-600 bg-green-50' },
+   240→                  { label: 'Customers', value: stats.customers, icon: Users, color: 'text-purple-600 bg-purple-50' },
+   241→                  { label: 'Menu Items', value: stats.items, icon: UtensilsCrossed, color: 'text-orange-600 bg-orange-50' },
+   242→                ].map((stat) => (
+   243→                  <Card key={stat.label}>
+   244→                    <CardContent className="p-4">
+   245→                      <div className="flex items-center gap-3">
+   246→                        <div className={`w-10 h-10 rounded-lg ${stat.color} flex items-center justify-center`}>
+   247→                          <stat.icon className="w-5 h-5" />
+   248→                        </div>
+   249→                        <div>
+   250→                          <p className="text-xs text-muted-foreground">{stat.label}</p>
+   251→                          <p className="text-lg font-bold text-brand-dark">{stat.value}</p>
+   252→                        </div>
+   253→                      </div>
+   254→                    </CardContent>
+   255→                  </Card>
+   256→                ))}
+   257→              </div>
+   258→
+   259→              {/* Recent Orders */}
+   260→              <Card>
+   261→                <CardHeader>
+   262→                  <CardTitle className="text-base">Recent Orders</CardTitle>
+   263→                </CardHeader>
+   264→                <CardContent>
+   265→                  {orders.length === 0 ? (
+   266→                    <p className="text-sm text-muted-foreground text-center py-4">No orders yet</p>
+   267→                  ) : (
+   268→                    <div className="overflow-x-auto">
+   269→                      <Table>
+   270→                        <TableHeader>
+   271→                          <TableRow>
+   272→                            <TableHead>Order ID</TableHead>
+   273→                            <TableHead>Customer</TableHead>
+   274→                            <TableHead>Total</TableHead>
+   275→                            <TableHead>Status</TableHead>
+   276→                            <TableHead>Date</TableHead>
+   277→                          </TableRow>
+   278→                        </TableHeader>
+   279→                        <TableBody>
+   280→                          {orders.slice(0, 10).map((order: any) => (
+   281→                            <TableRow key={order.id}>
+   282→                              <TableCell className="font-mono text-xs">#{order.id.slice(-8)}</TableCell>
+   283→                              <TableCell className="text-sm">{order.user?.name || 'Guest'}</TableCell>
+   284→                              <TableCell className="font-semibold">₹{order.total}</TableCell>
+   285→                              <TableCell>
+   286→                                <Badge className={statusColors[order.status] || 'bg-gray-100 text-gray-800'}>
+   287→                                  {order.status}
+   288→                                </Badge>
+   289→                              </TableCell>
+   290→                              <TableCell className="text-xs text-muted-foreground">
+   291→                                {new Date(order.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
+   292→                              </TableCell>
+   293→                            </TableRow>
+   294→                          ))}
+   295→                        </TableBody>
+   296→                      </Table>
+   297→                    </div>
+   298→                  )}
+   299→                </CardContent>
+   300→              </Card>
+   301→            </div>
+   302→          )}
+   303→
+   304→          {/* Orders Section */}
+   305→          {activeSection === 'orders' && (
+   306→            <div className="space-y-4">
+   307→              <div className="flex items-center justify-between">
+   308→                <h2 className="text-lg font-semibold text-brand-dark">Order Management</h2>
+   309→                <Select value={orderStatusFilter} onValueChange={setOrderStatusFilter}>
+   310→                  <SelectTrigger className="w-40">
+   311→                    <SelectValue placeholder="Filter status" />
+   312→                  </SelectTrigger>
+   313→                  <SelectContent>
+   314→                    <SelectItem value="all">All Status</SelectItem>
+   315→                    <SelectItem value="Placed">Placed</SelectItem>
+   316→                    <SelectItem value="Confirmed">Confirmed</SelectItem>
+   317→                    <SelectItem value="Preparing">Preparing</SelectItem>
+   318→                    <SelectItem value="Out for Delivery">Out for Delivery</SelectItem>
+   319→                    <SelectItem value="Completed">Completed</SelectItem>
+   320→                    <SelectItem value="Cancelled">Cancelled</SelectItem>
+   321→                  </SelectContent>
+   322→                </Select>
+   323→              </div>
+   324→
+   325→              <div className="space-y-3">
+   326→                {(orderStatusFilter === 'all' ? orders : orders.filter((o: any) => o.status === orderStatusFilter)).map((order: any) => (
+   327→                  <Card key={order.id}>
+   328→                    <CardContent className="p-4">
+   329→                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+   330→                        <div className="flex-1">
+   331→                          <div className="flex items-center gap-2 mb-1">
+   332→                            <span className="font-mono text-sm font-semibold">#{order.id.slice(-8)}</span>
+   333→                            <Badge className={statusColors[order.status] || 'bg-gray-100 text-gray-800'}>{order.status}</Badge>
+   334→                            <Badge variant="outline" className={order.paymentStatus === 'paid' ? 'border-green-500 text-green-700' : 'border-yellow-500 text-yellow-700'}>
+   335→                              {order.paymentStatus}
+   336→                            </Badge>
+   337→                          </div>
+   338→                          <p className="text-xs text-muted-foreground">
+   339→                            {order.user?.name || 'Guest'} • {new Date(order.createdAt).toLocaleString('en-IN')}
+   340→                          </p>
+   341→                          <p className="text-sm font-semibold text-brand-maroon mt-1">₹{order.total}</p>
+   342→                          {order.items && (
+   343→                            <p className="text-xs text-muted-foreground mt-1">
+   344→                              {order.items.map((i: any) => `${i.name} x${i.quantity}`).join(', ')}
+   345→                            </p>
+   346→                          )}
+   347→                        </div>
+   348→                        <Select
+   349→                          value={order.status}
+   350→                          onValueChange={(value) => updateOrderStatus(order.id, value)}
+   351→                        >
+   352→                          <SelectTrigger className="w-40">
+   353→                            <SelectValue />
+   354→                          </SelectTrigger>
+   355→                          <SelectContent>
+   356→                            {['Placed', 'Confirmed', 'Preparing', 'Out for Delivery', 'Ready', 'Completed', 'Cancelled'].map((s) => (
+   357→                              <SelectItem key={s} value={s}>{s}</SelectItem>
+   358→                            ))}
+   359→                          </SelectContent>
+   360→                        </Select>
+   361→                      </div>
+   362→                    </CardContent>
+   363→                  </Card>
+   364→                ))}
+   365→              </div>
+   366→            </div>
+   367→          )}
+   368→
+   369→          {/* Menu Section */}
+   370→          {activeSection === 'menu' && (
+   371→            <div className="space-y-4">
+   372→              <div className="flex items-center justify-between">
+   373→                <h2 className="text-lg font-semibold text-brand-dark">Menu Management ({menuItems.length} items)</h2>
+   374→              </div>
+   375→              <div className="overflow-x-auto">
+   376→                <Table>
+   377→                  <TableHeader>
+   378→                    <TableRow>
+   379→                      <TableHead>Name</TableHead>
+   380→                      <TableHead>Category</TableHead>
+   381→                      <TableHead>Price</TableHead>
+   382→                      <TableHead>Available</TableHead>
+   383→                      <TableHead>Featured</TableHead>
+   384→                    </TableRow>
+   385→                  </TableHeader>
+   386→                  <TableBody>
+   387→                    {menuItems.slice(0, 50).map((item: any) => (
+   388→                      <TableRow key={item.id}>
+   389→                        <TableCell className="font-medium text-sm">{item.name}</TableCell>
+   390→                        <TableCell className="text-xs">{item.category?.name}</TableCell>
+   391→                        <TableCell className="text-sm">
+   392→                          {(() => {
+   393→                            try {
+   394→                              const prices = JSON.parse(item.prices || '{}');
+   395→                              return Object.entries(prices).map(([k, v]) => `${k}: ₹${v}`).join(' / ');
+   396→                            } catch { return '—'; }
+   397→                          })()}
+   398→                        </TableCell>
+   399→                        <TableCell>
+   400→                          <button
+   401→                            onClick={() => toggleMenuAvailability(item.id, item.isAvailable)}
+   402→                            className={`text-xs px-2 py-1 rounded-full ${item.isAvailable ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}
+   403→                          >
+   404→                            {item.isAvailable ? 'Yes' : 'No'}
+   405→                          </button>
+   406→                        </TableCell>
+   407→                        <TableCell>
+   408→                          <Badge variant={item.isFeatured ? 'default' : 'outline'} className="text-[10px]">
+   409→                            {item.isFeatured ? '★' : '—'}
+   410→                          </Badge>
+   411→                        </TableCell>
+   412→                      </TableRow>
+   413→                    ))}
+   414→                  </TableBody>
+   415→                </Table>
+   416→              </div>
+   417→            </div>
+   418→          )}
+   419→
+   420→          {/* Customers Section */}
+   421→          {activeSection === 'customers' && (
+   422→            <Card>
+   423→              <CardHeader>
+   424→                <CardTitle>Customers ({customers.length})</CardTitle>
+   425→              </CardHeader>
+   426→              <CardContent>
+   427→                {customers.length === 0 ? (
+   428→                  <p className="text-sm text-muted-foreground text-center py-4">No registered customers yet</p>
+   429→                ) : (
+   430→                  <Table>
+   431→                    <TableHeader>
+   432→                      <TableRow>
+   433→                        <TableHead>Name</TableHead>
+   434→                        <TableHead>Email</TableHead>
+   435→                        <TableHead>Phone</TableHead>
+   436→                        <TableHead>Role</TableHead>
+   437→                        <TableHead>Joined</TableHead>
+   438→                      </TableRow>
+   439→                    </TableHeader>
+   440→                    <TableBody>
+   441→                      {customers.map((c: any) => (
+   442→                        <TableRow key={c.id}>
+   443→                          <TableCell className="font-medium">{c.name}</TableCell>
+   444→                          <TableCell className="text-sm">{c.email}</TableCell>
+   445→                          <TableCell className="text-sm">{c.phone || '—'}</TableCell>
+   446→                          <TableCell><Badge variant="outline">{c.role}</Badge></TableCell>
+   447→                          <TableCell className="text-xs text-muted-foreground">{new Date(c.createdAt).toLocaleDateString()}</TableCell>
+   448→                        </TableRow>
+   449→                      ))}
+   450→                    </TableBody>
+   451→                  </Table>
+   452→                )}
+   453→              </CardContent>
+   454→            </Card>
+   455→          )}
+   456→
+   457→          {/* Coupons Section */}
+   458→          {activeSection === 'coupons' && (
+   459→            <Card>
+   460→              <CardHeader>
+   461→                <CardTitle>Coupons ({coupons.length})</CardTitle>
+   462→              </CardHeader>
+   463→              <CardContent>
+   464→                <Table>
+   465→                  <TableHeader>
+   466→                    <TableRow>
+   467→                      <TableHead>Code</TableHead>
+   468→                      <TableHead>Type</TableHead>
+   469→                      <TableHead>Value</TableHead>
+   470→                      <TableHead>Min Order</TableHead>
+   471→                      <TableHead>Used</TableHead>
+   472→                      <TableHead>Status</TableHead>
+   473→                    </TableRow>
+   474→                  </TableHeader>
+   475→                  <TableBody>
+   476→                    {coupons.map((c: any) => (
+   477→                      <TableRow key={c.id}>
+   478→                        <TableCell className="font-mono font-bold">{c.code}</TableCell>
+   479→                        <TableCell className="capitalize">{c.type}</TableCell>
+   480→                        <TableCell>{c.type === 'percentage' ? `${c.value}%` : `₹${c.value}`}</TableCell>
+   481→                        <TableCell>₹{c.minOrder}</TableCell>
+   482→                        <TableCell>{c.usedCount}/{c.usageLimit || '∞'}</TableCell>
+   483→                        <TableCell><Badge className={c.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}>{c.isActive ? 'Active' : 'Inactive'}</Badge></TableCell>
+   484→                      </TableRow>
+   485→                    ))}
+   486→                  </TableBody>
+   487→                </Table>
+   488→              </CardContent>
+   489→            </Card>
+   490→          )}
+   491→
+   492→          {/* Reservations Section */}
+   493→          {activeSection === 'reservations' && (
+   494→            <Card>
+   495→              <CardHeader>
+   496→                <CardTitle>Reservations ({reservations.length})</CardTitle>
+   497→              </CardHeader>
+   498→              <CardContent>
+   499→                {reservations.length === 0 ? (
+   500→                  <p className="text-sm text-muted-foreground text-center py-4">No reservations yet</p>
+   501→                ) : (
+   502→                  <Table>
+   503→                    <TableHeader>
+   504→                      <TableRow>
+   505→                        <TableHead>Name</TableHead>
+   506→                        <TableHead>Phone</TableHead>
+   507→                        <TableHead>Date</TableHead>
+   508→                        <TableHead>Time</TableHead>
+   509→                        <TableHead>Party Size</TableHead>
+   510→                        <TableHead>Status</TableHead>
+   511→                      </TableRow>
+   512→                    </TableHeader>
+   513→                    <TableBody>
+   514→                      {reservations.map((r: any) => (
+   515→                        <TableRow key={r.id}>
+   516→                          <TableCell className="font-medium">{r.name}</TableCell>
+   517→                          <TableCell className="text-sm">{r.phone}</TableCell>
+   518→                          <TableCell className="text-sm">{r.date}</TableCell>
+   519→                          <TableCell className="text-sm">{r.time}</TableCell>
+   520→                          <TableCell>{r.partySize}</TableCell>
+   521→                          <TableCell><Badge className={r.status === 'confirmed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}>{r.status}</Badge></TableCell>
+   522→                        </TableRow>
+   523→                      ))}
+   524→                    </TableBody>
+   525→                  </Table>
+   526→                )}
+   527→              </CardContent>
+   528→            </Card>
+   529→          )}
+   530→
+   531→          {/* Inquiries Section */}
+   532→          {activeSection === 'inquiries' && (
+   533→            <Card>
+   534→              <CardHeader>
+   535→                <CardTitle>Contact Inquiries ({inquiries.length})</CardTitle>
+   536→              </CardHeader>
+   537→              <CardContent>
+   538→                {inquiries.length === 0 ? (
+   539→                  <p className="text-sm text-muted-foreground text-center py-4">No inquiries yet</p>
+   540→                ) : (
+   541→                  <div className="space-y-3">
+   542→                    {inquiries.map((inq: any) => (
+   543→                      <div key={inq.id} className="border rounded-lg p-4">
+   544→                        <div className="flex items-center justify-between mb-2">
+   545→                          <div>
+   546→                            <span className="font-medium">{inq.name}</span>
+   547→                            <span className="text-xs text-muted-foreground ml-2">{inq.email}</span>
+   548→                          </div>
+   549→                          <Badge className={inq.status === 'new' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'}>
+   550→                            {inq.status}
+   551→                          </Badge>
+   552→                        </div>
+   553→                        {inq.subject && <p className="text-sm font-medium text-brand-dark">{inq.subject}</p>}
+   554→                        <p className="text-sm text-muted-foreground">{inq.message}</p>
+   555→                        <p className="text-xs text-muted-foreground mt-1">{new Date(inq.createdAt).toLocaleString('en-IN')}</p>
+   556→                      </div>
+   557→                    ))}
+   558→                  </div>
+   559→                )}
+   560→              </CardContent>
+   561→            </Card>
+   562→          )}
+   563→
+   564→          {/* Reports Section */}
+   565→          {activeSection === 'reports' && <AdminReports />}
+   566→
+   567→          {/* Payments Section */}
+   568→          {activeSection === 'payments' && (
+   569→            <Card>
+   570→              <CardHeader>
+   571→                <CardTitle>Payment Transactions</CardTitle>
+   572→              </CardHeader>
+   573→              <CardContent>
+   574→                <Table>
+   575→                  <TableHeader>
+   576→                    <TableRow>
+   577→                      <TableHead>Order ID</TableHead>
+   578→                      <TableHead>Amount</TableHead>
+   579→                      <TableHead>Method</TableHead>
+   580→                      <TableHead>Status</TableHead>
+   581→                      <TableHead>Date</TableHead>
+   582→                    </TableRow>
+   583→                  </TableHeader>
+   584→                  <TableBody>
+   585→                    {orders.filter((o: any) => o.paymentStatus === 'paid').map((o: any) => (
+   586→                      <TableRow key={o.id}>
+   587→                        <TableCell className="font-mono text-xs">#{o.id.slice(-8)}</TableCell>
+   588→                        <TableCell className="font-semibold">₹{o.total}</TableCell>
+   589→                        <TableCell>{o.paymentMethod}</TableCell>
+   590→                        <TableCell><Badge className="bg-green-100 text-green-800">{o.paymentStatus}</Badge></TableCell>
+   591→                        <TableCell className="text-xs">{new Date(o.createdAt).toLocaleDateString()}</TableCell>
+   592→                      </TableRow>
+   593→                    ))}
+   594→                  </TableBody>
+   595→                </Table>
+   596→              </CardContent>
+   597→            </Card>
+   598→          )}
+   599→
+   600→          {/* Banners Section */}
+   601→          {activeSection === 'banners' && (
+   602→            <Card>
+   603→              <CardHeader>
+   604→                <CardTitle>Banner Management</CardTitle>
+   605→              </CardHeader>
+   606→              <CardContent>
+   607→                <p className="text-sm text-muted-foreground text-center py-4">Banner upload and management coming soon. Use the admin API to manage banners programmatically.</p>
+   608→              </CardContent>
+   609→            </Card>
+   610→          )}
+   611→        </div>
+   612→      </main>
+   613→    </div>
+   614→  );
+   615→}
+   616→
