@@ -1,8 +1,10 @@
 import { db } from '@/lib/db';
 import { NextResponse } from 'next/server';
+import { authErrorResponse, requireAdmin } from '@/lib/auth';
 
 export async function GET() {
   try {
+    await requireAdmin();
     // Get all orders
     const orders = await db.order.findMany({
       orderBy: { createdAt: 'asc' },
@@ -93,6 +95,8 @@ export async function GET() {
       paymentChart,
     });
   } catch (error) {
+    const authResponse = authErrorResponse(error);
+    if (authResponse) return authResponse;
     console.error('Reports API error:', error);
     return NextResponse.json({ error: 'Failed to generate reports' }, { status: 500 });
   }

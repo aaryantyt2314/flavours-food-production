@@ -8,6 +8,8 @@ import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { MapPin, Plus, Pencil, Trash2, Home, Building, MapPinned } from 'lucide-react';
 import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 
 interface Address {
   id: string;
@@ -19,30 +21,19 @@ interface Address {
   isDefault: boolean;
 }
 
-function getStoredUser() {
-  if (typeof window === 'undefined') return null;
-
-  const stored = localStorage.getItem('flavours-user');
-  if (!stored) return null;
-
-  try {
-    return JSON.parse(stored);
-  } catch {
-    return null;
-  }
-}
-
 export default function AddressesPage() {
   const [addresses, setAddresses] = useState<Address[]>([]);
-  const [user] = useState<any>(() => getStoredUser());
-  const [loading, setLoading] = useState(() => !!getStoredUser());
+  const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
   const [form, setForm] = useState({ label: 'Home', street: '', city: 'Muradnagar', state: 'Uttar Pradesh', pincode: '' });
+  const router = useRouter();
+  const { data: session, status } = useSession();
+  const user = session?.user;
 
   const fetchAddresses = useCallback(async (userId: string) => {
     try {
-      const res = await fetch(`/api/addresses?userId=${userId}`);
+      const res = await fetch('/api/addresses');
       if (res.ok) {
         const data = await res.json();
         setAddresses(data);
@@ -55,16 +46,26 @@ export default function AddressesPage() {
   }, []);
 
   useEffect(() => {
-    if (user) {
+    if (status === 'authenticated' && user?.id) {
       queueMicrotask(() => {
         void fetchAddresses(user.id);
       });
+    } else if (status === 'unauthenticated') {
+      router.push('/login');
     }
-  }, [fetchAddresses, user]);
+  }, [fetchAddresses, router, status, user]);
+
+  if (status === 'loading') {
+    return (
+      <div className="min-h-screen bg-brand-cream flex items-center justify-center">
+        <p className="text-muted-foreground">Loading...</p>
+      </div>
+    );
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) return;
+    if (!user?.id) return;
 
     try {
       const url = editId ? `/api/addresses/${editId}` : '/api/addresses';
@@ -72,7 +73,7 @@ export default function AddressesPage() {
       const res = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, userId: user.id }),
+        body: JSON.stringify(form),
       });
 
       if (res.ok) {
@@ -90,7 +91,7 @@ export default function AddressesPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!user) return;
+    if (!user?.id) return;
     try {
       const res = await fetch(`/api/addresses/${id}`, { method: 'DELETE' });
       if (res.ok) {
@@ -103,12 +104,12 @@ export default function AddressesPage() {
   };
 
   const handleSetDefault = async (id: string) => {
-    if (!user) return;
+    if (!user?.id) return;
     try {
       const res = await fetch(`/api/addresses/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ isDefault: true, userId: user.id }),
+        body: JSON.stringify({ isDefault: true }),
       });
       if (res.ok) {
         toast.success('Default address updated');

@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Package } from 'lucide-react';
+import { useSession } from 'next-auth/react';
 
 interface Order {
   id: string;
@@ -18,19 +19,6 @@ interface Order {
   paymentMethod: string;
   createdAt: string;
   items: { name: string; price: number; priceTier: string; quantity: number }[];
-}
-
-function getStoredUser() {
-  if (typeof window === 'undefined') return null;
-
-  const stored = localStorage.getItem('flavours-user');
-  if (!stored) return null;
-
-  try {
-    return JSON.parse(stored);
-  } catch {
-    return null;
-  }
 }
 
 const statusColors: Record<string, string> = {
@@ -45,13 +33,14 @@ const statusColors: Record<string, string> = {
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
-  const [user] = useState<any>(() => getStoredUser());
-  const [loading, setLoading] = useState(() => !!getStoredUser());
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const { data: session, status } = useSession();
+  const user = session?.user;
 
   const fetchOrders = async (userId: string) => {
     try {
-      const res = await fetch(`/api/orders?userId=${userId}`);
+      const res = await fetch('/api/orders');
       const data = await res.json();
       setOrders(data);
     } catch (error) {
@@ -62,14 +51,22 @@ export default function OrdersPage() {
   };
 
   useEffect(() => {
-    if (user) {
+    if (status === 'authenticated' && user?.id) {
       queueMicrotask(() => {
         void fetchOrders(user.id);
       });
-    } else {
+    } else if (status === 'unauthenticated') {
       router.push('/login');
     }
-  }, [router, user]);
+  }, [router, status, user]);
+
+  if (status === 'loading') {
+    return (
+      <div className="min-h-screen bg-brand-cream flex items-center justify-center">
+        <p className="text-muted-foreground">Loading orders...</p>
+      </div>
+    );
+  }
 
   if (loading) {
     return (

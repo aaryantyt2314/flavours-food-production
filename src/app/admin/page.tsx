@@ -17,6 +17,7 @@ import { toast } from 'sonner';
 import AdminReports from '@/components/admin/AdminReports';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
+import { useSession } from 'next-auth/react';
 
 const sidebarItems = [
   { icon: LayoutDashboard, label: 'Dashboard', section: 'dashboard' },
@@ -43,9 +44,9 @@ const emptyMenuItemForm = {
 
 export default function AdminDashboard() {
   const [activeSection, setActiveSection] = useState('dashboard');
-  const [user, setUser] = useState<any>(null);
   const [mobileSidebar, setMobileSidebar] = useState(false);
   const router = useRouter();
+  const { data: session, status } = useSession();
   const imagePreviewRef = useRef<string | null>(null);
 
   // Data states
@@ -176,23 +177,17 @@ export default function AdminDashboard() {
   };
 
   useEffect(() => {
-    const stored = localStorage.getItem('flavours-user');
-    if (stored) {
-      try {
-        const u = JSON.parse(stored);
-        if (u.role !== 'admin') {
-          toast.error('Admin access required');
-          router.push('/login');
-          return;
-        }
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setUser(u);
-        loadAllData();
-      } catch {}
-    } else {
+    if (status === 'authenticated' && session?.user?.role === 'admin') {
+      queueMicrotask(() => {
+        void loadAllData();
+      });
+    } else if (status === 'authenticated') {
+      toast.error('Admin access required');
+      router.push('/login');
+    } else if (status === 'unauthenticated') {
       router.push('/login');
     }
-  }, [router, loadAllData]);
+  }, [router, session, status, loadAllData]);
 
   const updateOrderStatus = async (orderId: string, status: string) => {
     try {
@@ -252,7 +247,7 @@ export default function AdminDashboard() {
     'Cancelled': 'bg-red-100 text-red-800',
   };
 
-  if (!user) {
+  if (status === 'loading' || !session?.user) {
     return <div className="min-h-screen bg-brand-cream flex items-center justify-center"><p>Loading...</p></div>;
   }
 
@@ -337,7 +332,7 @@ export default function AdminDashboard() {
           </div>
           <div className="flex items-center gap-2">
             <Badge className="bg-brand-maroon text-white">Admin</Badge>
-            <span className="text-sm text-muted-foreground hidden sm:inline">{user.name}</span>
+            <span className="text-sm text-muted-foreground hidden sm:inline">{session.user.name}</span>
           </div>
         </header>
 

@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { mkdir, writeFile } from 'fs/promises';
 import { join, extname } from 'path';
 import { randomUUID } from 'crypto';
+import { authErrorResponse, requireAdmin } from '@/lib/auth';
 
 export const runtime = 'nodejs';
 
@@ -52,6 +53,7 @@ function toBoolean(value: unknown) {
 
 export async function PATCH(request: NextRequest) {
   try {
+    await requireAdmin();
     const body = await readMenuPayload(request);
     const { itemId, isAvailable, isFeatured, name, description, prices, categoryId, subCategory, priceLabel, imageFile } = body as any;
 
@@ -80,6 +82,8 @@ export async function PATCH(request: NextRequest) {
 
     return NextResponse.json(item);
   } catch (error) {
+    const authResponse = authErrorResponse(error);
+    if (authResponse) return authResponse;
     console.error('Menu update error:', error);
     return NextResponse.json({ error: 'Failed to update menu item' }, { status: 500 });
   }
@@ -87,6 +91,7 @@ export async function PATCH(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    await requireAdmin();
     const body = await readMenuPayload(request);
     const { name, description, prices, priceLabel, categoryId, subCategory, isVeg, isFeatured, imageFile } = body as any;
 
@@ -112,6 +117,8 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(item, { status: 201 });
   } catch (error) {
+    const authResponse = authErrorResponse(error);
+    if (authResponse) return authResponse;
     console.error('Menu create error:', error);
     return NextResponse.json({ error: 'Failed to create menu item' }, { status: 500 });
   }
@@ -119,6 +126,7 @@ export async function POST(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
+    await requireAdmin();
     const { searchParams } = new URL(request.url);
     const itemId = searchParams.get('id');
 
@@ -129,6 +137,8 @@ export async function DELETE(request: NextRequest) {
     await db.menuItem.delete({ where: { id: itemId } });
     return NextResponse.json({ message: 'Item deleted' });
   } catch (error) {
+    const authResponse = authErrorResponse(error);
+    if (authResponse) return authResponse;
     console.error('Menu delete error:', error);
     return NextResponse.json({ error: 'Failed to delete menu item' }, { status: 500 });
   }

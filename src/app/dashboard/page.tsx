@@ -1,52 +1,30 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
 import { Package, User, Heart, MapPin, LogOut, ShoppingBag } from 'lucide-react';
 import { toast } from 'sonner';
-
-interface UserData {
-  id: string;
-  name: string;
-  email: string;
-  phone: string | null;
-  role: string;
-}
+import { signOut, useSession } from 'next-auth/react';
 
 export default function DashboardPage() {
-  const [user, setUser] = useState<UserData | null>(null);
   const router = useRouter();
-
-  const loadUser = useCallback(() => {
-    const stored = localStorage.getItem('flavours-user');
-    if (stored) {
-      try { return JSON.parse(stored) as UserData; } catch { return null; }
-    }
-    return null;
-  }, []);
+  const { data: session, status } = useSession();
 
   useEffect(() => {
-    const u = loadUser();
-    if (u) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setUser(u);
-    } else {
+    if (status === 'unauthenticated') {
       router.push('/login');
     }
-  }, [router, loadUser]);
+  }, [router, status]);
 
-  const handleLogout = () => {
-    localStorage.removeItem('flavours-user');
+  const handleLogout = async () => {
     toast.success('Logged out');
-    router.push('/');
+    await signOut({ callbackUrl: '/' });
   };
 
-  if (!user) {
+  if (status === 'loading' || !session?.user) {
     return (
       <div className="min-h-screen bg-brand-cream flex items-center justify-center">
         <p className="text-muted-foreground">Loading...</p>
@@ -59,12 +37,11 @@ export default function DashboardPage() {
       <div className="bg-brand-dark py-8 px-4">
         <div className="max-w-5xl mx-auto">
           <h1 className="text-2xl font-bold text-brand-cream">My Dashboard</h1>
-          <p className="text-brand-tan/70 text-sm">Welcome back, {user.name}!</p>
+          <p className="text-brand-tan/70 text-sm">Welcome back, {session.user.name}!</p>
         </div>
       </div>
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
-        {/* Quick Actions */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
           {[
             { icon: ShoppingBag, label: 'Order Now', href: '/menu', color: 'bg-brand-maroon' },
@@ -85,7 +62,6 @@ export default function DashboardPage() {
           ))}
         </div>
 
-        {/* Profile */}
         <Card className="border-brand-tan/20 mb-6">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-brand-dark flex items-center gap-2">
@@ -100,21 +76,20 @@ export default function DashboardPage() {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
                 <p className="text-xs text-muted-foreground">Name</p>
-                <p className="font-medium text-brand-dark">{user.name}</p>
+                <p className="font-medium text-brand-dark">{session.user.name}</p>
               </div>
               <div>
                 <p className="text-xs text-muted-foreground">Email</p>
-                <p className="font-medium text-brand-dark">{user.email}</p>
+                <p className="font-medium text-brand-dark">{session.user.email}</p>
               </div>
               <div>
                 <p className="text-xs text-muted-foreground">Phone</p>
-                <p className="font-medium text-brand-dark">{user.phone || 'Not set'}</p>
+                <p className="font-medium text-brand-dark">{session.user.phone || 'Not set'}</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Recent Orders Preview */}
         <Card className="border-brand-tan/20">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-brand-dark flex items-center gap-2">

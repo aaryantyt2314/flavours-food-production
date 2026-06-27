@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
@@ -8,40 +8,40 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
+import { signIn, useSession } from 'next-auth/react';
 
 export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { data: session, status } = useSession();
+
+  useEffect(() => {
+    if (status === 'authenticated' && session?.user) {
+      router.replace(session.user.role === 'admin' ? '/admin' : '/dashboard');
+    }
+  }, [router, session, status]);
+
+  if (status === 'authenticated') {
+    return null;
+  }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
 
     const form = new FormData(e.currentTarget);
-    const data = {
-      email: form.get('email'),
-      password: form.get('password'),
-    };
 
     try {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+      const result = await signIn('credentials', {
+        redirect: false,
+        email: String(form.get('email') || ''),
+        password: String(form.get('password') || ''),
       });
 
-      const result = await res.json();
-
-      if (res.ok) {
-        localStorage.setItem('flavours-user', JSON.stringify(result.user));
+      if (result?.ok) {
         toast.success('Login successful!');
-        if (result.user?.role === 'admin') {
-          router.push('/admin');
-        } else {
-          router.push('/dashboard');
-        }
       } else {
-        toast.error(result.error || 'Login failed');
+        toast.error(result?.error || 'Login failed');
       }
     } catch {
       toast.error('Something went wrong');
@@ -84,11 +84,6 @@ export default function LoginPage() {
             </p>
           </div>
 
-          <div className="mt-4 p-3 bg-muted/50 rounded-lg text-xs text-muted-foreground">
-            <p className="font-medium mb-1">Demo Credentials:</p>
-            <p>Admin: admin@flavoursfood.in / admin123</p>
-            <p>Or register a new customer account</p>
-          </div>
         </CardContent>
       </Card>
     </div>

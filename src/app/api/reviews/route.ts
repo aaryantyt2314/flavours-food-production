@@ -1,9 +1,9 @@
 import { db } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import { authErrorResponse, requireAuth } from '@/lib/auth';
 
 const reviewSchema = z.object({
-  userId: z.string(),
   menuItemId: z.string().optional(),
   orderId: z.string().optional(),
   rating: z.number().min(1).max(5),
@@ -12,12 +12,13 @@ const reviewSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
+    const session = await requireAuth();
     const body = await request.json();
     const data = reviewSchema.parse(body);
 
     const review = await db.review.create({
       data: {
-        userId: data.userId,
+        userId: session.user.id,
         menuItemId: data.menuItemId || null,
         rating: data.rating,
         comment: data.comment || null,
@@ -26,6 +27,8 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(review, { status: 201 });
   } catch (error) {
+    const authResponse = authErrorResponse(error);
+    if (authResponse) return authResponse;
     console.error('Review error:', error);
     if (error instanceof z.ZodError) {
       return NextResponse.json({ error: 'Validation failed' }, { status: 400 });

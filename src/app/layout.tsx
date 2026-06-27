@@ -5,6 +5,8 @@ import { Toaster } from "@/components/ui/sonner";
 import { Providers } from "@/components/Providers";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,17 +29,19 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await getServerSession(authOptions);
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} antialiased bg-background text-foreground`}
       >
-        <Providers>
+        <Providers session={session}>
           <div className="min-h-screen flex flex-col">
             <Navbar />
             <main className="flex-1">{children}</main>

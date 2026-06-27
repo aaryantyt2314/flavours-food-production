@@ -12,6 +12,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useCartStore } from '@/context/CartStore';
 import { ShoppingBag, MapPin, CreditCard, Tag, CheckCircle2, Loader2, Banknote, Wallet } from 'lucide-react';
 import { toast } from 'sonner';
+import { useSession } from 'next-auth/react';
 
 declare global {
   interface Window {
@@ -22,24 +23,19 @@ declare global {
 export default function CheckoutPage() {
   const { items, getTotal, clearCart } = useCartStore();
   const router = useRouter();
+  const { data: session, status } = useSession();
   const [loading, setLoading] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [placedOrderId, setPlacedOrderId] = useState('');
   const [couponCode, setCouponCode] = useState('');
   const [discount, setDiscount] = useState(0);
-  const [user] = useState<any>(() => {
-    if (typeof window === 'undefined') return null;
-
-    const stored = localStorage.getItem('flavours-user');
-    if (!stored) return null;
-
-    try {
-      return JSON.parse(stored);
-    } catch {
-      return null;
-    }
-  });
   const [paymentMethod, setPaymentMethod] = useState<'razorpay' | 'cod'>('razorpay');
+
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      router.push('/login?callbackUrl=/checkout');
+    }
+  }, [router, status]);
 
   // Load Razorpay script
   useEffect(() => {
@@ -51,6 +47,14 @@ export default function CheckoutPage() {
       document.body.appendChild(script);
     }
   }, [paymentMethod]);
+
+  if (status === 'loading' || status === 'unauthenticated') {
+    return (
+      <div className="min-h-screen bg-brand-cream flex items-center justify-center p-4">
+        <p className="text-muted-foreground">Loading...</p>
+      </div>
+    );
+  }
 
   const subtotal = getTotal();
   const total = subtotal - discount;
@@ -95,8 +99,8 @@ export default function CheckoutPage() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             razorpayOrderId: orderData.orderId,
-            razorpayPaymentId: `pay_sim_${Date.now()}`,
-            razorpaySignature: 'sim_signature',
+            razorpayPaymentId: orderData.razorpayPaymentId,
+            razorpaySignature: orderData.razorpaySignature,
             dbOrderId: orderId,
           }),
         });
@@ -147,9 +151,9 @@ export default function CheckoutPage() {
           }
         },
         prefill: {
-          name: user?.name || '',
-          email: user?.email || '',
-          contact: user?.phone || '',
+          name: session?.user?.name || '',
+          email: session?.user?.email || '',
+          contact: session?.user?.phone || '',
         },
         theme: {
           color: '#8B5A2B',
@@ -177,17 +181,11 @@ export default function CheckoutPage() {
 
     const form = new FormData(e.currentTarget);
     const orderData = {
-      userId: user?.id || null,
       items: items.map((i) => ({
         menuItemId: i.menuItemId,
-        name: i.name,
-        price: i.price,
         priceTier: i.priceTier,
         quantity: i.quantity,
       })),
-      subtotal,
-      discount,
-      total,
       couponCode: discount > 0 ? couponCode : null,
       address: {
         street: form.get('address'),
@@ -246,7 +244,7 @@ export default function CheckoutPage() {
               <Button onClick={() => router.push('/menu')} variant="outline" className="border-brand-maroon/30 text-brand-maroon">
                 Order More
               </Button>
-              {user && (
+              {session?.user && (
                 <Button onClick={() => router.push('/dashboard/orders')} className="bg-brand-maroon hover:bg-brand-dark text-white">
                   View Orders
                 </Button>

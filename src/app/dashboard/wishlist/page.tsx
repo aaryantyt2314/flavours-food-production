@@ -8,6 +8,8 @@ import { Badge } from '@/components/ui/badge';
 import { Heart, ShoppingBag, Trash2 } from 'lucide-react';
 import { useCartStore, CartItem } from '@/context/CartStore';
 import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 
 interface WishlistItem {
   id: string;
@@ -21,28 +23,17 @@ interface WishlistItem {
   };
 }
 
-function getStoredUser() {
-  if (typeof window === 'undefined') return null;
-
-  const stored = localStorage.getItem('flavours-user');
-  if (!stored) return null;
-
-  try {
-    return JSON.parse(stored);
-  } catch {
-    return null;
-  }
-}
-
 export default function WishlistPage() {
   const [items, setItems] = useState<WishlistItem[]>([]);
-  const [user] = useState<any>(() => getStoredUser());
-  const [loading, setLoading] = useState(() => !!getStoredUser());
+  const [loading, setLoading] = useState(true);
   const addItem = useCartStore((s) => s.addItem);
+  const router = useRouter();
+  const { data: session, status } = useSession();
+  const user = session?.user;
 
   const fetchWishlist = useCallback(async (userId: string) => {
     try {
-      const res = await fetch(`/api/wishlist?userId=${userId}`);
+      const res = await fetch('/api/wishlist');
       if (res.ok) {
         const data = await res.json();
         setItems(data);
@@ -55,17 +46,27 @@ export default function WishlistPage() {
   }, []);
 
   useEffect(() => {
-    if (user) {
+    if (status === 'authenticated' && user?.id) {
       queueMicrotask(() => {
         void fetchWishlist(user.id);
       });
+    } else if (status === 'unauthenticated') {
+      router.push('/login');
     }
-  }, [fetchWishlist, user]);
+  }, [fetchWishlist, router, status, user]);
+
+  if (status === 'loading') {
+    return (
+      <div className="min-h-screen bg-brand-cream flex items-center justify-center">
+        <p className="text-muted-foreground">Loading...</p>
+      </div>
+    );
+  }
 
   const handleRemove = async (menuItemId: string) => {
     if (!user) return;
     try {
-      const res = await fetch(`/api/wishlist?userId=${user.id}&menuItemId=${menuItemId}`, { method: 'DELETE' });
+      const res = await fetch(`/api/wishlist?menuItemId=${menuItemId}`, { method: 'DELETE' });
       if (res.ok) {
         setItems(items.filter((i) => i.menuItemId !== menuItemId));
         toast.success('Removed from wishlist');
