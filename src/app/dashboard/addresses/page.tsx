@@ -19,10 +19,23 @@ interface Address {
   isDefault: boolean;
 }
 
+function getStoredUser() {
+  if (typeof window === 'undefined') return null;
+
+  const stored = localStorage.getItem('flavours-user');
+  if (!stored) return null;
+
+  try {
+    return JSON.parse(stored);
+  } catch {
+    return null;
+  }
+}
+
 export default function AddressesPage() {
   const [addresses, setAddresses] = useState<Address[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<any>(null);
+  const [user] = useState<any>(() => getStoredUser());
+  const [loading, setLoading] = useState(() => !!getStoredUser());
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
   const [form, setForm] = useState({ label: 'Home', street: '', city: 'Muradnagar', state: 'Uttar Pradesh', pincode: '' });
@@ -42,17 +55,12 @@ export default function AddressesPage() {
   }, []);
 
   useEffect(() => {
-    const stored = localStorage.getItem('flavours-user');
-    if (stored) {
-      try {
-        const u = JSON.parse(stored);
-        setUser(u);
-        fetchAddresses(u.id);
-      } catch {}
-    } else {
-      setLoading(false);
+    if (user) {
+      queueMicrotask(() => {
+        void fetchAddresses(user.id);
+      });
     }
-  }, [fetchAddresses]);
+  }, [fetchAddresses, user]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

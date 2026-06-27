@@ -21,10 +21,23 @@ interface WishlistItem {
   };
 }
 
+function getStoredUser() {
+  if (typeof window === 'undefined') return null;
+
+  const stored = localStorage.getItem('flavours-user');
+  if (!stored) return null;
+
+  try {
+    return JSON.parse(stored);
+  } catch {
+    return null;
+  }
+}
+
 export default function WishlistPage() {
   const [items, setItems] = useState<WishlistItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<any>(null);
+  const [user] = useState<any>(() => getStoredUser());
+  const [loading, setLoading] = useState(() => !!getStoredUser());
   const addItem = useCartStore((s) => s.addItem);
 
   const fetchWishlist = useCallback(async (userId: string) => {
@@ -42,17 +55,12 @@ export default function WishlistPage() {
   }, []);
 
   useEffect(() => {
-    const stored = localStorage.getItem('flavours-user');
-    if (stored) {
-      try {
-        const u = JSON.parse(stored);
-        setUser(u);
-        fetchWishlist(u.id);
-      } catch {}
-    } else {
-      setLoading(false);
+    if (user) {
+      queueMicrotask(() => {
+        void fetchWishlist(user.id);
+      });
     }
-  }, [fetchWishlist]);
+  }, [fetchWishlist, user]);
 
   const handleRemove = async (menuItemId: string) => {
     if (!user) return;

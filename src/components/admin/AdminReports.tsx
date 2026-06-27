@@ -33,10 +33,6 @@ export default function AdminReports() {
   const [data, setData] = useState<ReportData | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchReports();
-  }, []);
-
   const fetchReports = async () => {
     try {
       const res = await fetch('/api/admin/reports');
@@ -50,6 +46,12 @@ export default function AdminReports() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    queueMicrotask(() => {
+      void fetchReports();
+    });
+  }, []);
 
   if (loading) {
     return <div className="text-center py-8 text-muted-foreground">Loading analytics...</div>;

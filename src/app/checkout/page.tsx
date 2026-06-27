@@ -27,16 +27,19 @@ export default function CheckoutPage() {
   const [placedOrderId, setPlacedOrderId] = useState('');
   const [couponCode, setCouponCode] = useState('');
   const [discount, setDiscount] = useState(0);
-  const [user, setUser] = useState<any>(null);
-  const [paymentMethod, setPaymentMethod] = useState<'razorpay' | 'cod'>('razorpay');
-  const [razorpayLoaded, setRazorpayLoaded] = useState(false);
+  const [user] = useState<any>(() => {
+    if (typeof window === 'undefined') return null;
 
-  useEffect(() => {
     const stored = localStorage.getItem('flavours-user');
-    if (stored) {
-      try { setUser(JSON.parse(stored)); } catch {}
+    if (!stored) return null;
+
+    try {
+      return JSON.parse(stored);
+    } catch {
+      return null;
     }
-  }, []);
+  });
+  const [paymentMethod, setPaymentMethod] = useState<'razorpay' | 'cod'>('razorpay');
 
   // Load Razorpay script
   useEffect(() => {
@@ -45,10 +48,7 @@ export default function CheckoutPage() {
       script.id = 'razorpay-script';
       script.src = 'https://checkout.razorpay.com/v1/checkout.js';
       script.async = true;
-      script.onload = () => setRazorpayLoaded(true);
       document.body.appendChild(script);
-    } else if (document.getElementById('razorpay-script')) {
-      setRazorpayLoaded(true);
     }
   }, [paymentMethod]);
 

@@ -20,6 +20,19 @@ interface Order {
   items: { name: string; price: number; priceTier: string; quantity: number }[];
 }
 
+function getStoredUser() {
+  if (typeof window === 'undefined') return null;
+
+  const stored = localStorage.getItem('flavours-user');
+  if (!stored) return null;
+
+  try {
+    return JSON.parse(stored);
+  } catch {
+    return null;
+  }
+}
+
 const statusColors: Record<string, string> = {
   'Placed': 'bg-yellow-100 text-yellow-800',
   'Confirmed': 'bg-blue-100 text-blue-800',
@@ -32,22 +45,9 @@ const statusColors: Record<string, string> = {
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<any>(null);
+  const [user] = useState<any>(() => getStoredUser());
+  const [loading, setLoading] = useState(() => !!getStoredUser());
   const router = useRouter();
-
-  useEffect(() => {
-    const stored = localStorage.getItem('flavours-user');
-    if (stored) {
-      try {
-        const u = JSON.parse(stored);
-        setUser(u);
-        fetchOrders(u.id);
-      } catch {}
-    } else {
-      router.push('/login');
-    }
-  }, [router]);
 
   const fetchOrders = async (userId: string) => {
     try {
@@ -60,6 +60,16 @@ export default function OrdersPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (user) {
+      queueMicrotask(() => {
+        void fetchOrders(user.id);
+      });
+    } else {
+      router.push('/login');
+    }
+  }, [router, user]);
 
   if (loading) {
     return (
