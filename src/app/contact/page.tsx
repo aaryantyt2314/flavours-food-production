@@ -98,7 +98,7 @@ export default function ContactPage() {
             {/* Map */}
             <Card className="border-brand-tan/20 overflow-hidden">
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3495.6!2d77.5!3d28.78!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sMuradnagar%2C%20Uttar%20Pradesh!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
+                src="https://www.google.com/maps?q=28.7509479,77.4932956&z=17&output=embed"
                 width="100%"
                 height="200"
                 style={{ border: 0 }}

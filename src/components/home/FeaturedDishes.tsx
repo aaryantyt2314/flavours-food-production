@@ -70,16 +70,18 @@ export default function FeaturedDishes() {
               return (
                 <Card key={item.id} className="overflow-hidden border-brand-tan/30 hover:shadow-lg transition-shadow group">
                   <div className="h-36 bg-gradient-to-br from-brand-tan/30 to-brand-maroon/10 flex items-center justify-center relative">
-                    <span className="text-5xl opacity-60 group-hover:scale-110 transition-transform">
-                      {item.category?.slug === 'pizzeria' ? '🍕' :
-                       item.category?.slug === 'dilli-haat-momo' ? '🥟' :
-                       item.category?.slug === 'tandoori-menu' ? '🔥' :
-                       item.category?.slug === 'beverages' ? '🥤' :
-                       item.category?.slug === 'misthaan-bhandaar' ? '🍨' :
-                       item.category?.slug === 'chinese-cuisine' ? '🥡' :
-                       item.category?.slug === 'fries-nachos' ? '🍟' :
-                       item.category?.slug === 'italian-pasta' ? '🍝' : '🍽️'}
-                    </span>
+                    {item.image ? (
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="absolute inset-0 h-full w-full object-cover"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <span className="text-sm font-semibold tracking-wide text-brand-maroon/70">
+                        Add image
+                      </span>
+                    )}
                     <Badge className="absolute top-2 left-2 bg-brand-gold text-brand-dark text-[10px]">
                       <Star className="w-3 h-3 mr-1" /> Featured
                     </Badge>

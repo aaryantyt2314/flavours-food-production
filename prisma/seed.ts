@@ -6,11 +6,16 @@ async function main() {
 
   // ─── Create Admin User ──────────────────────────────────────
   // Password: admin123 (bcrypt hashed)
-  const adminPassword = '$2b$10$K7L1OJ45/4Y2nIvhRVpCe.FSmhDdWoXehVzJptJ/op0lSsvqNu6GK'; // admin123
+  const adminPassword = '$2b$10$ixi7Dd8Ll29pb1QLqV6sxOW53Y00UwK0buVnX0xShlsLMZtmGY0/y'; // admin123
   
   await prisma.user.upsert({
     where: { email: 'admin@flavoursfood.in' },
-    update: {},
+    update: {
+      password: adminPassword,
+      name: 'Admin',
+      phone: '+91-7817878595',
+      role: 'admin',
+    },
     create: {
       name: 'Admin',
       email: 'admin@flavoursfood.in',

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -31,11 +31,22 @@ const sidebarItems = [
   { icon: CreditCard, label: 'Payments', section: 'payments' },
 ];
 
+const emptyMenuItemForm = {
+  name: '',
+  description: '',
+  prices: '{"Regular":0}',
+  categoryId: '',
+  subCategory: '',
+  isVeg: true,
+  isFeatured: false,
+};
+
 export default function AdminDashboard() {
   const [activeSection, setActiveSection] = useState('dashboard');
   const [user, setUser] = useState<any>(null);
   const [mobileSidebar, setMobileSidebar] = useState(false);
   const router = useRouter();
+  const imagePreviewRef = useRef<string | null>(null);
 
   // Data states
   const [stats, setStats] = useState({ orders: 0, revenue: 0, customers: 0, items: 0 });
@@ -47,8 +58,51 @@ export default function AdminDashboard() {
   const [coupons, setCoupons] = useState<any[]>([]);
   const [orderStatusFilter, setOrderStatusFilter] = useState('all');
   const [menuDialogOpen, setMenuDialogOpen] = useState(false);
-  const [newItemForm, setNewItemForm] = useState({ name: '', description: '', prices: '{"Regular":0}', categoryId: '', subCategory: '', isVeg: true, isFeatured: false });
+  const [editingMenuItemId, setEditingMenuItemId] = useState<string | null>(null);
+  const [newItemForm, setNewItemForm] = useState(emptyMenuItemForm);
+  const [newItemImage, setNewItemImage] = useState<File | null>(null);
+  const [newItemImagePreview, setNewItemImagePreview] = useState('');
   const [categories, setCategories] = useState<any[]>([]);
+
+  const resetMenuForm = useCallback(() => {
+    setNewItemForm(emptyMenuItemForm);
+    setNewItemImage(null);
+    setNewItemImagePreview('');
+    setEditingMenuItemId(null);
+  }, []);
+
+  const openCreateMenuDialog = useCallback(() => {
+    resetMenuForm();
+    setMenuDialogOpen(true);
+  }, [resetMenuForm]);
+
+  const openEditMenuDialog = useCallback((item: any) => {
+    setEditingMenuItemId(item.id);
+    setNewItemForm({
+      name: item.name || '',
+      description: item.description || '',
+      prices: item.prices || '{"Regular":0}',
+      categoryId: item.categoryId || '',
+      subCategory: item.subCategory || '',
+      isVeg: item.isVeg ?? true,
+      isFeatured: item.isFeatured ?? false,
+    });
+    setNewItemImage(null);
+    setNewItemImagePreview(item.image || '');
+    setMenuDialogOpen(true);
+  }, []);
+
+  useEffect(() => {
+    imagePreviewRef.current = newItemImagePreview || null;
+  }, [newItemImagePreview]);
+
+  useEffect(() => {
+    return () => {
+      if (imagePreviewRef.current?.startsWith('blob:')) {
+        URL.revokeObjectURL(imagePreviewRef.current);
+      }
+    };
+  }, []);
 
   const loadAllData = useCallback(async () => {
     try {
@@ -89,24 +143,35 @@ export default function AdminDashboard() {
     fetch('/api/categories').then(r => r.json()).then(data => setCategories(data)).catch(() => {});
   }, []);
 
-  const handleCreateMenuItem = async (e: React.FormEvent) => {
+  const handleSubmitMenuItem = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const formData = new FormData();
+      formData.append('name', newItemForm.name);
+      formData.append('description', newItemForm.description);
+      formData.append('prices', newItemForm.prices);
+      formData.append('categoryId', newItemForm.categoryId);
+      formData.append('subCategory', newItemForm.subCategory);
+      formData.append('isVeg', String(newItemForm.isVeg));
+      formData.append('isFeatured', String(newItemForm.isFeatured));
+      if (editingMenuItemId) formData.append('itemId', editingMenuItemId);
+      if (newItemImage) formData.append('image', newItemImage);
+
       const res = await fetch('/api/admin/menu', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newItemForm),
+        method: editingMenuItemId ? 'PATCH' : 'POST',
+        body: formData,
       });
       if (res.ok) {
-        toast.success('Menu item created!');
+        toast.success(editingMenuItemId ? 'Menu item updated!' : 'Menu item created!');
         setMenuDialogOpen(false);
+        resetMenuForm();
         loadAllData();
       } else {
         const data = await res.json();
-        toast.error(data.error || 'Failed to create item');
+        toast.error(data.error || (editingMenuItemId ? 'Failed to update item' : 'Failed to create item'));
       }
     } catch {
-      toast.error('Failed to create item');
+      toast.error(editingMenuItemId ? 'Failed to update item' : 'Failed to create item');
     }
   };
 
@@ -158,6 +223,22 @@ export default function AdminDashboard() {
       }
     } catch {
       toast.error('Failed to update menu item');
+    }
+  };
+
+  const handleMenuImageChange = (file: File | null) => {
+    if (imagePreviewRef.current?.startsWith('blob:')) {
+      URL.revokeObjectURL(imagePreviewRef.current);
+    }
+
+    setNewItemImage(file);
+    if (file) {
+      const previewUrl = URL.createObjectURL(file);
+      setNewItemImagePreview(previewUrl);
+      imagePreviewRef.current = previewUrl;
+    } else {
+      setNewItemImagePreview('');
+      imagePreviewRef.current = null;
     }
   };
 
@@ -404,15 +485,15 @@ export default function AdminDashboard() {
                 <h2 className="text-lg font-semibold text-brand-dark">Menu Management ({menuItems.length} items)</h2>
                 <Dialog open={menuDialogOpen} onOpenChange={setMenuDialogOpen}>
                   <DialogTrigger asChild>
-                    <Button className="bg-brand-maroon hover:bg-brand-dark text-white" onClick={() => setNewItemForm({ name: '', description: '', prices: '{"Regular":0}', categoryId: '', subCategory: '', isVeg: true, isFeatured: false })}>
+                    <Button className="bg-brand-maroon hover:bg-brand-dark text-white" onClick={openCreateMenuDialog}>
                       <Plus className="w-4 h-4 mr-2" /> Add Item
                     </Button>
                   </DialogTrigger>
                   <DialogContent className="max-w-md">
                     <DialogHeader>
-                      <DialogTitle className="text-brand-dark">Add Menu Item</DialogTitle>
+                      <DialogTitle className="text-brand-dark">{editingMenuItemId ? 'Edit Menu Item' : 'Add Menu Item'}</DialogTitle>
                     </DialogHeader>
-                    <form onSubmit={handleCreateMenuItem} className="space-y-3">
+                    <form onSubmit={handleSubmitMenuItem} className="space-y-3">
                       <div>
                         <Label className="text-xs">Name *</Label>
                         <Input value={newItemForm.name} onChange={(e) => setNewItemForm({...newItemForm, name: e.target.value})} required className="border-brand-tan/30" />
@@ -443,6 +524,20 @@ export default function AdminDashboard() {
                         <Input value={newItemForm.prices} onChange={(e) => setNewItemForm({...newItemForm, prices: e.target.value})} required placeholder='{"Regular":199}' className="border-brand-tan/30 font-mono text-xs" />
                         <p className="text-[10px] text-muted-foreground mt-1">{'Format: {"Regular":199} or {"M":299,"L":399}'}</p>
                       </div>
+                      <div>
+                        <Label className="text-xs">Item Image</Label>
+                        <Input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => handleMenuImageChange(e.target.files?.[0] || null)}
+                          className="border-brand-tan/30"
+                        />
+                        {newItemImagePreview && (
+                          <div className="mt-2 overflow-hidden rounded-lg border border-brand-tan/20 bg-brand-cream">
+                            <img src={newItemImagePreview} alt="Selected item preview" className="h-32 w-full object-cover" />
+                          </div>
+                        )}
+                      </div>
                       <div className="flex items-center gap-4">
                         <label className="flex items-center gap-2 text-xs">
                           <input type="checkbox" checked={newItemForm.isVeg} onChange={(e) => setNewItemForm({...newItemForm, isVeg: e.target.checked})} /> Veg
@@ -451,7 +546,9 @@ export default function AdminDashboard() {
                           <input type="checkbox" checked={newItemForm.isFeatured} onChange={(e) => setNewItemForm({...newItemForm, isFeatured: e.target.checked})} /> Featured
                         </label>
                       </div>
-                      <Button type="submit" className="w-full bg-brand-maroon hover:bg-brand-dark text-white">Create Item</Button>
+                      <Button type="submit" className="w-full bg-brand-maroon hover:bg-brand-dark text-white">
+                        {editingMenuItemId ? 'Update Item' : 'Create Item'}
+                      </Button>
                     </form>
                   </DialogContent>
                 </Dialog>
@@ -462,9 +559,11 @@ export default function AdminDashboard() {
                     <TableRow>
                       <TableHead>Name</TableHead>
                       <TableHead>Category</TableHead>
+                      <TableHead>Image</TableHead>
                       <TableHead>Price</TableHead>
                       <TableHead>Available</TableHead>
                       <TableHead>Featured</TableHead>
+                      <TableHead>Edit</TableHead>
                       <TableHead>Delete</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -473,6 +572,13 @@ export default function AdminDashboard() {
                       <TableRow key={item.id}>
                         <TableCell className="font-medium text-sm">{item.name}</TableCell>
                         <TableCell className="text-xs">{item.category?.name}</TableCell>
+                        <TableCell>
+                          {item.image ? (
+                            <img src={item.image} alt={item.name} className="h-10 w-10 rounded-md object-cover border border-brand-tan/20" />
+                          ) : (
+                            <span className="text-xs text-muted-foreground">No image</span>
+                          )}
+                        </TableCell>
                         <TableCell className="text-sm">
                           {(() => {
                             try {
@@ -493,6 +599,11 @@ export default function AdminDashboard() {
                           <Badge variant={item.isFeatured ? 'default' : 'outline'} className="text-[10px]">
                             {item.isFeatured ? '★' : '—'}
                           </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Button variant="ghost" size="icon" className="h-7 w-7 text-brand-maroon" onClick={() => openEditMenuDialog(item)}>
+                            <Edit className="w-3 h-3" />
+                          </Button>
                         </TableCell>
                         <TableCell>
                           <Button variant="ghost" size="icon" className="h-7 w-7 text-red-500" onClick={async () => { await fetch(`/api/admin/menu?id=${item.id}`, { method: 'DELETE' }); toast.success('Item deleted'); loadAllData(); }}>

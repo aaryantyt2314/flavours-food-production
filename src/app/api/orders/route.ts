@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
     // Create order
     const order = await db.order.create({
       data: {
-        userId: data.userId || 'guest',
+        userId: data.userId ?? null,
         subtotal: data.subtotal,
         discount: data.discount,
         total: data.total,

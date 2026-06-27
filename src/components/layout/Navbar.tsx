@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Menu, X, ShoppingCart, User, Phone } from 'lucide-react';
 import { useCartStore } from '@/context/CartStore';
 import { Button } from '@/components/ui/button';
@@ -18,7 +18,12 @@ const navLinks = [
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const itemCount = useCartStore((s) => s.getItemCount());
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <header className="sticky top-0 z-50 bg-brand-cream/95 backdrop-blur-md border-b border-brand-tan/30 shadow-sm">
@@ -76,7 +81,7 @@ export default function Navbar() {
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" className="relative text-brand-dark hover:text-brand-maroon hover:bg-brand-tan/20">
                   <ShoppingCart className="w-5 h-5" />
-                  {itemCount > 0 && (
+                  {mounted && itemCount > 0 && (
                     <span className="absolute -top-1 -right-1 bg-brand-red text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center animate-in zoom-in-50">
                       {itemCount}
                     </span>

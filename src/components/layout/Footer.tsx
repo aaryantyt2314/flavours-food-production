@@ -101,7 +101,7 @@ export default function Footer() {
             </div>
             <div className="rounded-lg overflow-hidden border border-brand-maroon/50">
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3495.6!2d77.5!3d28.78!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sMuradnagar%2C%20Uttar%20Pradesh!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3497.9487233492114!2d77.49072067493579!3d28.750947875600186!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390cf536990ec17b%3A0xc92b1a5141108e9a!2sFlavours%20Food!5e0!3m2!1sen!2sin!4v1782484121684!5m2!1sen!2sin"
                 width="100%"
                 height="120"
                 style={{ border: 0 }}

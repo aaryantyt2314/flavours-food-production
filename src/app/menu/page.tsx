@@ -64,21 +64,20 @@ function MenuCard({ item }: { item: MenuItemData }) {
     <Card className="overflow-hidden border-brand-tan/20 hover:shadow-md transition-shadow group">
       <CardContent className="p-4">
         <div className="flex items-start gap-3">
-          {/* Image placeholder */}
-          <div className="w-16 h-16 rounded-lg bg-gradient-to-br from-brand-tan/30 to-brand-maroon/10 flex items-center justify-center shrink-0">
-            <span className="text-2xl">
-              {item.category?.slug === 'pizzeria' ? '🍕' :
-               item.category?.slug === 'dilli-haat-momo' ? '🥟' :
-               item.category?.slug === 'tandoori-menu' ? '🔥' :
-               item.category?.slug === 'beverages' ? '🥤' :
-               item.category?.slug === 'misthaan-bhandaar' ? '🍨' :
-               item.category?.slug === 'chinese-cuisine' ? '🥡' :
-               item.category?.slug === 'fries-nachos' ? '🍟' :
-               item.category?.slug === 'italian-pasta' ? '🍝' :
-               item.category?.slug === 'indian-main-course' ? '🍛' :
-               item.category?.slug === 'sandwiches' ? '🥪' :
-               item.category?.slug === 'panipuri' ? '🫕' : '🍽️'}
-            </span>
+          {/* Item image */}
+          <div className="w-16 h-16 rounded-lg bg-gradient-to-br from-brand-tan/30 to-brand-maroon/10 flex items-center justify-center shrink-0 overflow-hidden">
+            {item.image ? (
+              <img
+                src={item.image}
+                alt={item.name}
+                className="w-full h-full object-cover"
+                loading="lazy"
+              />
+            ) : (
+              <span className="text-[10px] font-semibold text-brand-maroon/70 text-center px-1 leading-tight">
+                Add image
+              </span>
+            )}
           </div>
 
           <div className="flex-1 min-w-0">
@@ -240,7 +239,7 @@ function MenuPageContent() {
           </div>
         ) : filteredItems.length === 0 ? (
           <div className="text-center py-16">
-            <p className="text-4xl mb-3">🍽️</p>
+            <p className="text-4xl mb-3">📷</p>
             <p className="text-lg font-medium text-brand-dark mb-1">No items found</p>
             <p className="text-sm text-muted-foreground">Try a different search or category</p>
           </div>

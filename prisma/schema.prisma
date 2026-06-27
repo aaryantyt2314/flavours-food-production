@@ -81,8 +81,8 @@ model MenuItem {
 
 model Order {
   id              String      @id @default(cuid())
-  userId          String
-  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId          String?
+  user            User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
   items           OrderItem[]
   addressId       String?
   address         Address?    @relation(fields: [addressId], references: [id])
