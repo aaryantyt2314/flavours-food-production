@@ -2,21 +2,23 @@ import { Ratelimit } from '@upstash/ratelimit';
 import { Redis } from '@upstash/redis';
 import { NextResponse, type NextRequest } from 'next/server';
 
-const redisUrl = process.env.UPSTASH_REDIS_REST_URL;
-const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN;
-
-if (!redisUrl || !redisToken) {
-  throw new Error('UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN must be set');
-}
-
-export const redis = new Redis({
-  url: redisUrl,
-  token: redisToken,
-});
-
 const limiterCache = new Map<string, Ratelimit>();
 
-function getLimiter(limit: number, namespace: string) {
+function getRedis() {
+  const redisUrl = process.env.UPSTASH_REDIS_REST_URL;
+  const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN;
+
+  if (!redisUrl || !redisToken) {
+    return null;
+  }
+
+  return new Redis({
+    url: redisUrl,
+    token: redisToken,
+  });
+}
+
+function getLimiter(limit: number, namespace: string, redis: Redis) {
   const cacheKey = `${namespace}:${limit}`;
   const existingLimiter = limiterCache.get(cacheKey);
 
@@ -43,7 +45,14 @@ function getClientIp(request: NextRequest) {
 }
 
 export async function applyRateLimit(request: NextRequest, limit = 10, namespace = 'default') {
-  const limiter = getLimiter(limit, namespace);
+  const redis = getRedis();
+
+  if (!redis) {
+    console.warn('Upstash Redis is not configured; allowing request through without rate limiting.');
+    return null;
+  }
+
+  const limiter = getLimiter(limit, namespace, redis);
   const { success } = await limiter.limit(getClientIp(request));
 
   if (success) {

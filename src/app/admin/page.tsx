@@ -19,6 +19,14 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Label } from '@/components/ui/label';
 import { useSession } from 'next-auth/react';
 
+interface OrderItem { name: string; quantity: number; price: number; priceTier: string; }
+interface AdminOrder { id: string; total: number; subtotal: number; discount: number; status: string; paymentStatus: string; paymentMethod: string; createdAt: string; items: OrderItem[]; user?: { name: string; email: string; }; razorpayOrderId?: string; }
+interface AdminMenuItem { id: string; name: string; description?: string; prices: string; categoryId: string; subCategory?: string; isVeg: boolean; isFeatured: boolean; isAvailable: boolean; image?: string; order?: number; category?: { id: string; name: string; slug: string }; }
+interface AdminCustomer { id: string; name: string; email: string; phone?: string; role: string; createdAt: string; }
+interface AdminReservation { id: string; name: string; phone: string; email?: string; date: string; time: string; partySize: number; status: string; specialRequests?: string; createdAt: string; }
+interface AdminInquiry { id: string; name: string; email: string; phone?: string; subject?: string; message: string; status: string; createdAt: string; }
+interface AdminCoupon { id: string; code: string; type: string; value: number; minOrder: number; maxDiscount?: number; usageLimit?: number; usedCount: number; isActive: boolean; expiresAt?: string; }
+
 const sidebarItems = [
   { icon: LayoutDashboard, label: 'Dashboard', section: 'dashboard' },
   { icon: UtensilsCrossed, label: 'Menu', section: 'menu' },
@@ -54,19 +62,19 @@ export default function AdminDashboard() {
 
   // Data states
   const [stats, setStats] = useState({ orders: 0, revenue: 0, customers: 0, items: 0 });
-  const [orders, setOrders] = useState<any[]>([]);
-  const [menuItems, setMenuItems] = useState<any[]>([]);
-  const [customers, setCustomers] = useState<any[]>([]);
-  const [reservations, setReservations] = useState<any[]>([]);
-  const [inquiries, setInquiries] = useState<any[]>([]);
-  const [coupons, setCoupons] = useState<any[]>([]);
+  const [orders, setOrders] = useState<AdminOrder[]>([]);
+  const [menuItems, setMenuItems] = useState<AdminMenuItem[]>([]);
+  const [customers, setCustomers] = useState<AdminCustomer[]>([]);
+  const [reservations, setReservations] = useState<AdminReservation[]>([]);
+  const [inquiries, setInquiries] = useState<AdminInquiry[]>([]);
+  const [coupons, setCoupons] = useState<AdminCoupon[]>([]);
   const [orderStatusFilter, setOrderStatusFilter] = useState('all');
   const [menuDialogOpen, setMenuDialogOpen] = useState(false);
   const [editingMenuItemId, setEditingMenuItemId] = useState<string | null>(null);
   const [newItemForm, setNewItemForm] = useState(emptyMenuItemForm);
   const [newItemImage, setNewItemImage] = useState<File | null>(null);
   const [newItemImagePreview, setNewItemImagePreview] = useState('');
-  const [categories, setCategories] = useState<any[]>([]);
+  const [categories, setCategories] = useState<AdminMenuItem['category'][]>([]);
 
   const resetMenuForm = useCallback(() => {
     setNewItemForm(emptyMenuItemForm);
@@ -80,7 +88,7 @@ export default function AdminDashboard() {
     setMenuDialogOpen(true);
   }, [resetMenuForm]);
 
-  const openEditMenuDialog = useCallback((item: any) => {
+  const openEditMenuDialog = useCallback((item: AdminMenuItem) => {
     setEditingMenuItemId(item.id);
     setNewItemForm({
       name: item.name || '',
@@ -131,7 +139,7 @@ export default function AdminDashboard() {
       setCoupons(couponsData);
       setMenuPage(0);
 
-      const totalRevenue = ordersData.reduce((sum: number, o: any) => sum + (o.total || 0), 0);
+      const totalRevenue = ordersData.reduce((sum: number, o: AdminOrder) => sum + (o.total || 0), 0);
       setStats({
         orders: ordersData.length,
         revenue: totalRevenue,
@@ -388,7 +396,7 @@ export default function AdminDashboard() {
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {orders.slice(0, 10).map((order: any) => (
+                          {orders.slice(0, 10).map((order) => (
                             <TableRow key={order.id}>
                               <TableCell className="font-mono text-xs">#{order.id.slice(-8)}</TableCell>
                               <TableCell className="text-sm">{order.user?.name || 'Guest'}</TableCell>
@@ -434,7 +442,7 @@ export default function AdminDashboard() {
               </div>
 
               <div className="space-y-3">
-                {(orderStatusFilter === 'all' ? orders : orders.filter((o: any) => o.status === orderStatusFilter)).map((order: any) => (
+                {(orderStatusFilter === 'all' ? orders : orders.filter((o) => o.status === orderStatusFilter)).map((order) => (
                   <Card key={order.id}>
                     <CardContent className="p-4">
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -452,7 +460,7 @@ export default function AdminDashboard() {
                           <p className="text-sm font-semibold text-brand-maroon mt-1">₹{order.total}</p>
                           {order.items && (
                             <p className="text-xs text-muted-foreground mt-1">
-                              {order.items.map((i: any) => `${i.name} x${i.quantity}`).join(', ')}
+                              {order.items.map((i) => `${i.name} x${i.quantity}`).join(', ')}
                             </p>
                           )}
                         </div>
@@ -515,7 +523,7 @@ export default function AdminDashboard() {
                           <Select value={newItemForm.categoryId} onValueChange={(v) => setNewItemForm({...newItemForm, categoryId: v})}>
                             <SelectTrigger className="border-brand-tan/30"><SelectValue placeholder="Select" /></SelectTrigger>
                             <SelectContent>
-                              {categories.filter((c: any) => c.id).map((c: any) => (
+                              {categories.filter((c): c is NonNullable<AdminMenuItem['category']> => Boolean(c?.id)).map((c) => (
                                 <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
                               ))}
                             </SelectContent>
@@ -575,7 +583,7 @@ export default function AdminDashboard() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {menuItems.slice(menuPage * PAGE_SIZE, (menuPage + 1) * PAGE_SIZE).map((item: any) => (
+                    {menuItems.slice(menuPage * PAGE_SIZE, (menuPage + 1) * PAGE_SIZE).map((item) => (
                       <TableRow key={item.id}>
                         <TableCell className="font-medium text-sm">{item.name}</TableCell>
                         <TableCell className="text-xs">{item.category?.name}</TableCell>
@@ -667,7 +675,7 @@ export default function AdminDashboard() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {customers.map((c: any) => (
+                      {customers.map((c) => (
                         <TableRow key={c.id}>
                           <TableCell className="font-medium">{c.name}</TableCell>
                           <TableCell className="text-sm">{c.email}</TableCell>
@@ -702,7 +710,7 @@ export default function AdminDashboard() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {coupons.map((c: any) => (
+                    {coupons.map((c) => (
                       <TableRow key={c.id}>
                         <TableCell className="font-mono font-bold">{c.code}</TableCell>
                         <TableCell className="capitalize">{c.type}</TableCell>
@@ -740,7 +748,7 @@ export default function AdminDashboard() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {reservations.map((r: any) => (
+                      {reservations.map((r) => (
                         <TableRow key={r.id}>
                           <TableCell className="font-medium">{r.name}</TableCell>
                           <TableCell className="text-sm">{r.phone}</TableCell>
