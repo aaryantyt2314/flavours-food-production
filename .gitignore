@@ -25,6 +25,12 @@ db/*.db
 # misc
 .DS_Store
 *.pem
+tool-results/
+worklog.md
+download/
+examples/
+mini-services/
+Caddyfile
 
 # debug
 npm-debug.log*
