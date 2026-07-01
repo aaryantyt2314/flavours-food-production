@@ -1,8 +1,12 @@
 import { db } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
+import { applyRateLimit } from '@/lib/ratelimit';
 
 export async function GET(request: NextRequest) {
   try {
+    const rateLimitResponse = await applyRateLimit(request, 20, 'coupons-validate');
+    if (rateLimitResponse) return rateLimitResponse;
+
     const { searchParams } = new URL(request.url);
     const code = searchParams.get('code');
     const total = parseFloat(searchParams.get('total') || '0');

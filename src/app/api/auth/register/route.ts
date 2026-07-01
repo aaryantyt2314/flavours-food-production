@@ -2,6 +2,7 @@ import { db } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import bcrypt from 'bcryptjs';
+import { applyRateLimit } from '@/lib/ratelimit';
 
 const registerSchema = z.object({
   name: z.string().min(1),
@@ -12,6 +13,9 @@ const registerSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
+    const rateLimitResponse = await applyRateLimit(request, 5, 'auth-register');
+    if (rateLimitResponse) return rateLimitResponse;
+
     const body = await request.json();
     const data = registerSchema.parse(body);
 
@@ -38,10 +42,10 @@ export async function POST(request: NextRequest) {
 
     const { password: _, ...userWithoutPassword } = user;
     return NextResponse.json({ user: userWithoutPassword, message: 'Registration successful' }, { status: 201 });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Register error:', error);
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'Validation failed', details: error.errors }, { status: 400 });
+      return NextResponse.json({ error: 'Validation failed', details: error.issues }, { status: 400 });
     }
     return NextResponse.json({ error: 'Registration failed' }, { status: 500 });
   }

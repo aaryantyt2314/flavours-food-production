@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { z } from 'zod';
 import { authErrorResponse, requireAuth } from '@/lib/auth';
-import crypto from 'crypto';
 
 // Razorpay order creation
 const createOrderSchema = z.object({
@@ -29,10 +28,10 @@ export async function POST(request: NextRequest) {
     }
 
     const razorpayKeyId = process.env.RAZORPAY_KEY_ID;
-    const razorpayKeySecret = process.env.RAZORPAY_KEY_SECRET || (process.env.NODE_ENV !== 'production' ? 'dev-razorpay-secret' : undefined);
+    const razorpayKeySecret = process.env.RAZORPAY_KEY_SECRET;
 
-    if (process.env.NODE_ENV === 'production' && (!razorpayKeyId || !razorpayKeySecret)) {
-      return NextResponse.json({ error: 'Razorpay is not configured on the server' }, { status: 500 });
+    if (!razorpayKeyId || !razorpayKeySecret) {
+      return NextResponse.json({ error: 'Razorpay is not configured' }, { status: 500 });
     }
 
     // Create Razorpay order (amount in paise)
@@ -43,68 +42,36 @@ export async function POST(request: NextRequest) {
       payment_capture: 1,
     };
 
-    // Try real Razorpay if keys are configured
-    if (razorpayKeyId && razorpayKeySecret) {
-      try {
-        const Razorpay = (await import('razorpay')).default;
-        const razorpay = new Razorpay({
-          key_id: razorpayKeyId,
-          key_secret: razorpayKeySecret,
-        });
+    try {
+      const Razorpay = (await import('razorpay')).default;
+      const razorpay = new Razorpay({
+        key_id: razorpayKeyId,
+        key_secret: razorpayKeySecret,
+      });
 
-        const razorpayOrder = await razorpay.orders.create(orderData);
+      const razorpayOrder = await razorpay.orders.create(orderData);
 
-        // Update order with Razorpay order ID
-        await db.order.update({
-          where: { id: data.orderId },
-          data: {
-            razorpayOrderId: razorpayOrder.id,
-            paymentMethod: 'razorpay',
-          },
-        });
+      // Update order with Razorpay order ID
+      await db.order.update({
+        where: { id: data.orderId },
+        data: {
+          razorpayOrderId: razorpayOrder.id,
+          paymentMethod: 'razorpay',
+        },
+      });
 
-        return NextResponse.json({
-          orderId: razorpayOrder.id,
-          amount: order.total,
-          currency: 'INR',
-          key: razorpayKeyId,
-          dbOrderId: data.orderId,
-        });
-      } catch (razorpayError) {
-        console.error('Razorpay error:', razorpayError);
-        if (process.env.NODE_ENV === 'production') {
-          return NextResponse.json({ error: 'Failed to create Razorpay order' }, { status: 500 });
-        }
-      }
+      return NextResponse.json({
+        orderId: razorpayOrder.id,
+        amount: order.total,
+        currency: 'INR',
+        key: razorpayKeyId,
+        dbOrderId: data.orderId,
+      });
+    } catch (razorpayError) {
+      console.error('Razorpay error:', razorpayError);
+      return NextResponse.json({ error: 'Failed to create Razorpay order' }, { status: 500 });
     }
-
-    // Simulation mode (development only)
-    const simulatedOrderId = `order_sim_${Date.now()}`;
-    const simulatedPaymentId = `pay_sim_${Date.now()}`;
-    const simulatedSignature = crypto
-      .createHmac('sha256', razorpayKeySecret)
-      .update(`${simulatedOrderId}|${simulatedPaymentId}`)
-      .digest('hex');
-
-    await db.order.update({
-      where: { id: data.orderId },
-      data: {
-        razorpayOrderId: simulatedOrderId,
-        paymentMethod: 'razorpay',
-      },
-    });
-
-    return NextResponse.json({
-      orderId: simulatedOrderId,
-      amount: order.total,
-      currency: 'INR',
-      key: razorpayKeyId || 'development-only',
-      dbOrderId: data.orderId,
-      razorpayPaymentId: simulatedPaymentId,
-      razorpaySignature: simulatedSignature,
-      simulation: true,
-    });
-  } catch (error) {
+  } catch (error: unknown) {
     const authResponse = authErrorResponse(error);
     if (authResponse) return authResponse;
     console.error('Payment create-order error:', error);

@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { Menu, X, ShoppingCart, User, Phone } from 'lucide-react';
+import { useSession } from 'next-auth/react';
 import { useCartStore } from '@/context/CartStore';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
@@ -18,7 +19,10 @@ const navLinks = [
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { data: session } = useSession();
   const itemCount = useCartStore((s) => s.getItemCount());
+  const accountHref = session ? '/dashboard' : '/login';
+  const accountLabel = session ? 'My Account' : 'Login / Register';
 
   return (
     <header className="sticky top-0 z-50 bg-brand-cream/95 backdrop-blur-md border-b border-brand-tan/30 shadow-sm">
@@ -90,7 +94,7 @@ export default function Navbar() {
             </Sheet>
 
             {/* User */}
-            <Link href="/login">
+            <Link href={accountHref}>
               <Button variant="ghost" size="icon" className="text-brand-dark hover:text-brand-maroon hover:bg-brand-tan/20">
                 <User className="w-5 h-5" />
               </Button>
@@ -123,11 +127,11 @@ export default function Navbar() {
                 </Link>
               ))}
               <Link
-                href="/login"
+                href={accountHref}
                 onClick={() => setMobileOpen(false)}
                 className="px-3 py-2 text-sm font-medium text-brand-maroon hover:bg-brand-tan/20 rounded-md transition-colors"
               >
-                Login / Register
+                {accountLabel}
               </Link>
               <a
                 href="https://wa.me/917817878595?text=Hi%2C%20I%27d%20like%20to%20know%20more%20about%20your%20menu%2Forder."

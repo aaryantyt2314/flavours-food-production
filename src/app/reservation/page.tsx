@@ -107,7 +107,7 @@ export default function ReservationPage() {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="date">Date *</Label>
-                  <Input id="date" name="date" type="date" required className="border-brand-tan/30" />
+                  <Input id="date" name="date" type="date" min={new Date().toISOString().split('T')[0]} required className="border-brand-tan/30" />
                 </div>
                 <div className="space-y-2">
                   <Label>Time *</Label>

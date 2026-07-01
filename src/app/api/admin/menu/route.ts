@@ -1,22 +1,38 @@
 import { db } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
-import { mkdir, writeFile } from 'fs/promises';
-import { join, extname } from 'path';
-import { randomUUID } from 'crypto';
 import { authErrorResponse, requireAdmin } from '@/lib/auth';
+import { getCloudinary } from '@/lib/cloudinary';
+import { Readable } from 'stream';
 
 export const runtime = 'nodejs';
 
 async function saveMenuImage(file: File) {
-  const uploadDir = join(process.cwd(), 'public', 'uploads', 'menu');
-  await mkdir(uploadDir, { recursive: true });
-
-  const fileName = `${randomUUID()}${extname(file.name) || '.jpg'}`;
-  const filePath = join(uploadDir, fileName);
   const buffer = Buffer.from(await file.arrayBuffer());
 
-  await writeFile(filePath, buffer);
-  return `/uploads/menu/${fileName}`;
+  const cloudinary = getCloudinary();
+
+  return await new Promise<string>((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      {
+        folder: 'flavours-food/menu',
+      },
+      (error, result) => {
+        if (error) {
+          reject(error);
+          return;
+        }
+
+        if (!result?.secure_url) {
+          reject(new Error('Cloudinary upload did not return a secure URL'));
+          return;
+        }
+
+        resolve(result.secure_url);
+      }
+    );
+
+    Readable.from(buffer).pipe(uploadStream);
+  });
 }
 
 async function readMenuPayload(request: NextRequest) {

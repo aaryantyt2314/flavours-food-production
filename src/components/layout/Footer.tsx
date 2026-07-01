@@ -44,7 +44,6 @@ export default function Footer() {
                 { href: '/gallery', label: 'Gallery' },
                 { href: '/contact', label: 'Contact Us' },
                 { href: '/login', label: 'My Account' },
-                { href: '/admin', label: 'Admin Panel' },
               ].map((link) => (
                 <li key={link.href}>
                   <Link href={link.href} className="hover:text-white transition-colors">

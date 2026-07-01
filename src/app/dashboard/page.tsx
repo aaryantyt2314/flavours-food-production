@@ -1,23 +1,54 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { Package, User, Heart, MapPin, LogOut, ShoppingBag } from 'lucide-react';
 import { toast } from 'sonner';
 import { signOut, useSession } from 'next-auth/react';
 
+const statusColors: Record<string, string> = {
+  'Placed': 'bg-yellow-100 text-yellow-800',
+  'Confirmed': 'bg-blue-100 text-blue-800',
+  'Preparing': 'bg-orange-100 text-orange-800',
+  'Out for Delivery': 'bg-purple-100 text-purple-800',
+  'Ready': 'bg-green-100 text-green-800',
+  'Completed': 'bg-green-200 text-green-900',
+  'Cancelled': 'bg-red-100 text-red-800',
+};
+
 export default function DashboardPage() {
   const router = useRouter();
   const { data: session, status } = useSession();
+  const [recentOrders, setRecentOrders] = useState<any[]>([]);
 
   useEffect(() => {
     if (status === 'unauthenticated') {
       router.push('/login');
     }
   }, [router, status]);
+
+  useEffect(() => {
+    if (status !== 'authenticated') {
+      return;
+    }
+
+    const loadRecentOrders = async () => {
+      try {
+        const res = await fetch('/api/orders');
+        const data = await res.json();
+        setRecentOrders(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error('Failed to fetch recent orders:', error);
+        setRecentOrders([]);
+      }
+    };
+
+    void loadRecentOrders();
+  }, [status]);
 
   const handleLogout = async () => {
     toast.success('Logged out');
@@ -101,9 +132,34 @@ export default function DashboardPage() {
             </Link>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-muted-foreground text-center py-6">
-              Your order history will appear here once you place your first order.
-            </p>
+            {recentOrders.length === 0 ? (
+              <p className="text-sm text-muted-foreground text-center py-6">
+                Your order history will appear here once you place your first order.
+              </p>
+            ) : (
+              <div className="space-y-3">
+                {recentOrders.slice(0, 3).map((order) => (
+                  <div key={order.id} className="flex items-center justify-between gap-3 rounded-lg border border-brand-tan/20 px-4 py-3">
+                    <div>
+                      <p className="text-sm font-medium text-brand-dark">Order #{order.id.slice(-8)}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {new Date(order.createdAt).toLocaleDateString('en-IN', {
+                          day: 'numeric',
+                          month: 'short',
+                          year: 'numeric',
+                        })}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className="text-sm font-semibold text-brand-maroon">₹{order.total}</span>
+                      <Badge className={statusColors[order.status] || 'bg-gray-100 text-gray-800'}>
+                        {order.status}
+                      </Badge>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>

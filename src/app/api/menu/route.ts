@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
     const featured = searchParams.get('featured');
     const search = searchParams.get('search');
 
-    const where: any = {};
+    const where: any = { isAvailable: true };
 
     if (category) {
       const cat = await db.category.findFirst({ where: { slug: category } });
@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
     }
 
     if (search) {
-      where.name = { contains: search };
+      where.name = { contains: search, mode: 'insensitive' };
     }
 
     const items = await db.menuItem.findMany({

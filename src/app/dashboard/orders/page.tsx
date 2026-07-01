@@ -38,7 +38,7 @@ export default function OrdersPage() {
   const { data: session, status } = useSession();
   const user = session?.user;
 
-  const fetchOrders = async (userId: string) => {
+  const fetchOrders = async () => {
     try {
       const res = await fetch('/api/orders');
       const data = await res.json();
@@ -53,7 +53,7 @@ export default function OrdersPage() {
   useEffect(() => {
     if (status === 'authenticated' && user?.id) {
       queueMicrotask(() => {
-        void fetchOrders(user.id);
+        void fetchOrders();
       });
     } else if (status === 'unauthenticated') {
       router.push('/login');

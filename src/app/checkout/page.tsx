@@ -92,30 +92,6 @@ export default function CheckoutPage() {
         return;
       }
 
-      if (orderData.simulation) {
-        // Simulate successful payment in demo mode
-        const verifyRes = await fetch('/api/payments/verify', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            razorpayOrderId: orderData.orderId,
-            razorpayPaymentId: orderData.razorpayPaymentId,
-            razorpaySignature: orderData.razorpaySignature,
-            dbOrderId: orderId,
-          }),
-        });
-
-        if (verifyRes.ok) {
-          setOrderPlaced(true);
-          setPlacedOrderId(orderId);
-          clearCart();
-          toast.success('Payment successful! Order placed.');
-        } else {
-          toast.error('Payment verification failed');
-        }
-        return;
-      }
-
       // Real Razorpay checkout
       const options = {
         key: orderData.key,
@@ -370,7 +346,6 @@ export default function CheckoutPage() {
                       Apply
                     </Button>
                   </div>
-                  <p className="text-xs text-muted-foreground mt-2">Try: WELCOME10, FLAT50, FLAVOUR20</p>
                 </CardContent>
               </Card>
             </div>

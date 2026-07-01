@@ -42,9 +42,12 @@ const emptyMenuItemForm = {
   isFeatured: false,
 };
 
+const PAGE_SIZE = 50;
+
 export default function AdminDashboard() {
   const [activeSection, setActiveSection] = useState('dashboard');
   const [mobileSidebar, setMobileSidebar] = useState(false);
+  const [menuPage, setMenuPage] = useState(0);
   const router = useRouter();
   const { data: session, status } = useSession();
   const imagePreviewRef = useRef<string | null>(null);
@@ -126,6 +129,7 @@ export default function AdminDashboard() {
       setReservations(reservationsData);
       setInquiries(inquiriesData);
       setCoupons(couponsData);
+      setMenuPage(0);
 
       const totalRevenue = ordersData.reduce((sum: number, o: any) => sum + (o.total || 0), 0);
       setStats({
@@ -478,7 +482,15 @@ export default function AdminDashboard() {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-semibold text-brand-dark">Menu Management ({menuItems.length} items)</h2>
-                <Dialog open={menuDialogOpen} onOpenChange={setMenuDialogOpen}>
+                <Dialog
+                  open={menuDialogOpen}
+                  onOpenChange={(open) => {
+                    setMenuDialogOpen(open);
+                    if (!open) {
+                      setMenuPage(0);
+                    }
+                  }}
+                >
                   <DialogTrigger asChild>
                     <Button className="bg-brand-maroon hover:bg-brand-dark text-white" onClick={openCreateMenuDialog}>
                       <Plus className="w-4 h-4 mr-2" /> Add Item
@@ -563,7 +575,7 @@ export default function AdminDashboard() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {menuItems.slice(0, 50).map((item: any) => (
+                    {menuItems.slice(menuPage * PAGE_SIZE, (menuPage + 1) * PAGE_SIZE).map((item: any) => (
                       <TableRow key={item.id}>
                         <TableCell className="font-medium text-sm">{item.name}</TableCell>
                         <TableCell className="text-xs">{item.category?.name}</TableCell>
@@ -609,6 +621,27 @@ export default function AdminDashboard() {
                     ))}
                   </TableBody>
                 </Table>
+              </div>
+              <div className="flex items-center justify-between gap-4">
+                <Button
+                  variant="outline"
+                  onClick={() => setMenuPage((page) => Math.max(page - 1, 0))}
+                  disabled={menuPage === 0}
+                >
+                  Previous
+                </Button>
+                <p className="text-sm text-muted-foreground">
+                  {menuItems.length === 0
+                    ? 'Showing 0-0 of 0 items'
+                    : `Showing ${menuPage * PAGE_SIZE + 1}-${Math.min((menuPage + 1) * PAGE_SIZE, menuItems.length)} of ${menuItems.length} items`}
+                </p>
+                <Button
+                  variant="outline"
+                  onClick={() => setMenuPage((page) => page + 1)}
+                  disabled={(menuPage + 1) * PAGE_SIZE >= menuItems.length}
+                >
+                  Next
+                </Button>
               </div>
             </div>
           )}
