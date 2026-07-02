@@ -776,7 +776,7 @@ export default function AdminDashboard() {
                   <p className="text-sm text-muted-foreground text-center py-4">No inquiries yet</p>
                 ) : (
                   <div className="space-y-3">
-                    {inquiries.map((inq: any) => (
+                    {inquiries.map((inq: AdminInquiry) => (
                       <div key={inq.id} className="border rounded-lg p-4">
                         <div className="flex items-center justify-between mb-2">
                           <div>
@@ -819,7 +819,7 @@ export default function AdminDashboard() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {orders.filter((o: any) => o.paymentStatus === 'paid').map((o: any) => (
+                    {orders.filter((o: AdminOrder) => o.paymentStatus === 'paid').map((o: any) => (
                       <TableRow key={o.id}>
                         <TableCell className="font-mono text-xs">#{o.id.slice(-8)}</TableCell>
                         <TableCell className="font-semibold">₹{o.total}</TableCell>
