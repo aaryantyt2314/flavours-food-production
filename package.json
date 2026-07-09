@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "node ./node_modules/next/dist/bin/next dev -p 3000",
-    "build": "next build && cp -r .next/static .next/standalone/.next/ && cp -r public .next/standalone/",
-    "start": "NODE_ENV=production bun .next/standalone/server.js 2>&1 | tee server.log",
-    "lint": "eslint .",
+    "build": "node ./node_modules/next/dist/bin/next build && node ./scripts/copy-standalone-assets.mjs",
+    "start": "node ./scripts/start-standalone.mjs",
+    "lint": "node ./node_modules/eslint/bin/eslint.js .",
     "db:push": "prisma db push",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",

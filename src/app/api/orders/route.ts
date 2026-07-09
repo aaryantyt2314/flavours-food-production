@@ -2,28 +2,38 @@ import { db } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { authErrorResponse, requireAuth } from '@/lib/auth';
+import { applyRateLimit } from '@/lib/ratelimit';
+
+const orderStatuses = ['Placed', 'Confirmed', 'Preparing', 'Out for Delivery', 'Ready', 'Completed', 'Cancelled'] as const;
 
 const orderItemSchema = z.object({
-  menuItemId: z.string(),
-  priceTier: z.string(),
-  quantity: z.number().min(1),
+  menuItemId: z.string().trim().min(1).max(128),
+  priceTier: z.string().trim().min(1).max(50),
+  quantity: z.number().int().min(1).max(25),
 });
 
 const orderSchema = z.object({
-  items: z.array(orderItemSchema).min(1),
-  couponCode: z.string().nullable(),
+  items: z.array(orderItemSchema).min(1).max(50),
+  couponCode: z.string().trim().min(1).max(50).nullable().optional(),
   address: z.object({
-    street: z.string(),
-    city: z.string(),
-    pincode: z.string().optional(),
+    street: z.string().trim().min(1).max(255),
+    city: z.string().trim().min(1).max(100),
+    pincode: z.string().trim().max(20).optional(),
   }),
-  notes: z.string().optional(),
-  paymentMethod: z.string().default('cod'),
+  notes: z.string().trim().max(1000).optional(),
+  paymentMethod: z.enum(['cod', 'razorpay']).default('cod'),
+});
+
+const orderQuerySchema = z.object({
+  status: z.enum(orderStatuses).optional(),
 });
 
 export async function POST(request: NextRequest) {
   try {
     const session = await requireAuth();
+    const rateLimitResponse = await applyRateLimit(request, 10, 'orders-create');
+    if (rateLimitResponse) return rateLimitResponse;
+
     const body = await request.json();
     const data = orderSchema.parse(body);
 
@@ -61,8 +71,9 @@ export async function POST(request: NextRequest) {
     });
 
     let discount = 0;
-    if (data.couponCode) {
-      const coupon = await db.coupon.findUnique({ where: { code: data.couponCode } });
+    const couponCode = data.couponCode?.toUpperCase() || null;
+    if (couponCode) {
+      const coupon = await db.coupon.findUnique({ where: { code: couponCode } });
       const now = new Date();
       const couponUsable = coupon && coupon.isActive && (!coupon.expiresAt || coupon.expiresAt > now) && subtotal >= coupon.minOrder && (!coupon.usageLimit || coupon.usedCount < coupon.usageLimit);
 
@@ -89,8 +100,8 @@ export async function POST(request: NextRequest) {
         subtotal,
         discount,
         total,
-        couponCode: data.couponCode,
-        notes: data.notes || null,
+        couponCode,
+        notes: data.notes?.trim() || null,
         paymentMethod: data.paymentMethod,
         paymentStatus: data.paymentMethod === 'cod' ? 'pending' : 'pending',
         items: {
@@ -101,9 +112,9 @@ export async function POST(request: NextRequest) {
     });
 
     // Increment coupon usage if applicable
-    if (data.couponCode && discount > 0) {
+    if (couponCode && discount > 0) {
       await db.coupon.update({
-        where: { code: data.couponCode },
+        where: { code: couponCode },
         data: { usedCount: { increment: 1 } },
       });
     }
@@ -127,10 +138,12 @@ export async function GET(request: NextRequest) {
   try {
     const session = await requireAuth();
     const { searchParams } = new URL(request.url);
-    const status = searchParams.get('status');
+    const query = orderQuerySchema.parse({
+      status: searchParams.get('status') || undefined,
+    });
 
-    const where: any = session.user.role === 'admin' ? {} : { userId: session.user.id };
-    if (status) where.status = status;
+    const where: { userId?: string; status?: string } = session.user.role === 'admin' ? {} : { userId: session.user.id };
+    if (query.status) where.status = query.status;
 
     const orders = await db.order.findMany({
       where,
@@ -144,6 +157,9 @@ export async function GET(request: NextRequest) {
     const authResponse = authErrorResponse(error);
     if (authResponse) return authResponse;
     console.error('Orders GET error:', error);
+    if (error instanceof z.ZodError) {
+      return NextResponse.json({ error: 'Validation failed' }, { status: 400 });
+    }
     return NextResponse.json({ error: 'Failed to fetch orders' }, { status: 500 });
   }
 }

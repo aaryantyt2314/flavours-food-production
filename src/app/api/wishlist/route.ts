@@ -2,6 +2,7 @@ import { db } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { authErrorResponse, requireAuth } from '@/lib/auth';
+import { applyRateLimit } from '@/lib/ratelimit';
 
 export async function GET(request: NextRequest) {
   try {
@@ -23,12 +24,15 @@ export async function GET(request: NextRequest) {
 }
 
 const wishlistSchema = z.object({
-  menuItemId: z.string(),
+  menuItemId: z.string().trim().min(1).max(128),
 });
 
 export async function POST(request: NextRequest) {
   try {
     const session = await requireAuth();
+    const rateLimitResponse = await applyRateLimit(request, 30, 'wishlist-write');
+    if (rateLimitResponse) return rateLimitResponse;
+
     const body = await request.json();
     const data = wishlistSchema.parse(body);
 
@@ -45,6 +49,9 @@ export async function POST(request: NextRequest) {
     const authResponse = authErrorResponse(error);
     if (authResponse) return authResponse;
     console.error('Wishlist POST error:', error);
+    if (error instanceof z.ZodError) {
+      return NextResponse.json({ error: 'Validation failed' }, { status: 400 });
+    }
     return NextResponse.json({ error: 'Failed to add to wishlist' }, { status: 500 });
   }
 }
@@ -52,12 +59,11 @@ export async function POST(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     const session = await requireAuth();
-    const { searchParams } = new URL(request.url);
-    const menuItemId = searchParams.get('menuItemId');
+    const rateLimitResponse = await applyRateLimit(request, 30, 'wishlist-write');
+    if (rateLimitResponse) return rateLimitResponse;
 
-    if (!menuItemId) {
-      return NextResponse.json({ error: 'menuItemId required' }, { status: 400 });
-    }
+    const { searchParams } = new URL(request.url);
+    const { menuItemId } = wishlistSchema.parse({ menuItemId: searchParams.get('menuItemId') });
 
     await db.wishlistItem.delete({
       where: { userId_menuItemId: { userId: session.user.id, menuItemId } },
@@ -68,6 +74,9 @@ export async function DELETE(request: NextRequest) {
     const authResponse = authErrorResponse(error);
     if (authResponse) return authResponse;
     console.error('Wishlist DELETE error:', error);
+    if (error instanceof z.ZodError) {
+      return NextResponse.json({ error: 'Validation failed' }, { status: 400 });
+    }
     return NextResponse.json({ error: 'Failed to remove from wishlist' }, { status: 500 });
   }
 }

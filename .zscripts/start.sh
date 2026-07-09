@@ -51,8 +51,6 @@ echo ""
 # 切换到构建目录
 cd "$BUILD_DIR" || exit 1
 
-ls -lah
-
 DEFAULT_PACKAGED_DB_PATH="/app/db/custom.db"
 DEFAULT_PACKAGED_DATABASE_URL="file:$DEFAULT_PACKAGED_DB_PATH"
 
@@ -76,7 +74,7 @@ if [ -f "./next-service-dist/server.js" ]; then
 
         echo "🗄️  当前使用打包数据库: $DEFAULT_PACKAGED_DB_PATH"
     else
-        echo "🗄️  当前使用外部指定数据库: $DATABASE_URL"
+        echo "🗄️  当前使用外部指定数据库"
     fi
     
     # 后台启动 Next.js

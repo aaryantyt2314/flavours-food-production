@@ -2,13 +2,14 @@ import { db } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { authErrorResponse, requireAuth } from '@/lib/auth';
+import { applyRateLimit } from '@/lib/ratelimit';
 
 const addressSchema = z.object({
-  label: z.string().min(1),
-  street: z.string().min(1),
-  city: z.string().min(1),
-  state: z.string().min(1),
-  pincode: z.string().optional(),
+  label: z.string().trim().min(1).max(50),
+  street: z.string().trim().min(1).max(255),
+  city: z.string().trim().min(1).max(100),
+  state: z.string().trim().min(1).max(100),
+  pincode: z.string().trim().max(20).optional(),
 });
 
 export async function GET(request: NextRequest) {
@@ -32,6 +33,9 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const session = await requireAuth();
+    const rateLimitResponse = await applyRateLimit(request, 20, 'addresses-create');
+    if (rateLimitResponse) return rateLimitResponse;
+
     const body = await request.json();
     const data = addressSchema.parse(body);
 
@@ -45,7 +49,7 @@ export async function POST(request: NextRequest) {
         street: data.street,
         city: data.city,
         state: data.state,
-        pincode: data.pincode || null,
+        pincode: data.pincode?.trim() || null,
         isDefault: existingCount === 0,
       },
     });

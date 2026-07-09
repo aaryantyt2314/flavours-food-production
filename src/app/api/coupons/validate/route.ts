@@ -1,6 +1,12 @@
 import { db } from '@/lib/db';
-import { NextRequest, NextResponse } from 'next/server';
 import { applyRateLimit } from '@/lib/ratelimit';
+import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
+
+const couponQuerySchema = z.object({
+  code: z.string().trim().min(1).max(50).transform((code) => code.toUpperCase()),
+  total: z.coerce.number().finite().min(0).max(100000),
+});
 
 export async function GET(request: NextRequest) {
   try {
@@ -8,15 +14,13 @@ export async function GET(request: NextRequest) {
     if (rateLimitResponse) return rateLimitResponse;
 
     const { searchParams } = new URL(request.url);
-    const code = searchParams.get('code');
-    const total = parseFloat(searchParams.get('total') || '0');
-
-    if (!code) {
-      return NextResponse.json({ error: 'Coupon code required' }, { status: 400 });
-    }
+    const query = couponQuerySchema.parse({
+      code: searchParams.get('code'),
+      total: searchParams.get('total') || '0',
+    });
 
     const coupon = await db.coupon.findUnique({
-      where: { code: code.toUpperCase() },
+      where: { code: query.code },
     });
 
     if (!coupon || !coupon.isActive) {
@@ -31,13 +35,13 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Coupon usage limit reached' }, { status: 400 });
     }
 
-    if (total < coupon.minOrder) {
-      return NextResponse.json({ error: `Minimum order ₹${coupon.minOrder} required` }, { status: 400 });
+    if (query.total < coupon.minOrder) {
+      return NextResponse.json({ error: `Minimum order Rs ${coupon.minOrder} required` }, { status: 400 });
     }
 
     let discount = 0;
     if (coupon.type === 'percentage') {
-      discount = (total * coupon.value) / 100;
+      discount = (query.total * coupon.value) / 100;
       if (coupon.maxDiscount) discount = Math.min(discount, coupon.maxDiscount);
     } else {
       discount = coupon.value;
@@ -51,6 +55,9 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('Coupon validation error:', error);
+    if (error instanceof z.ZodError) {
+      return NextResponse.json({ error: 'Validation failed' }, { status: 400 });
+    }
     return NextResponse.json({ error: 'Failed to validate coupon' }, { status: 500 });
   }
 }

@@ -2,15 +2,19 @@ import { db } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { authErrorResponse, requireAuth } from '@/lib/auth';
+import { applyRateLimit } from '@/lib/ratelimit';
 
 const profileSchema = z.object({
-  name: z.string().min(1),
-  phone: z.string().optional(),
+  name: z.string().trim().min(1).max(100),
+  phone: z.string().trim().max(20).regex(/^[+()\-\s\d]*$/).optional(),
 });
 
 export async function PATCH(request: NextRequest) {
   try {
     const session = await requireAuth();
+    const rateLimitResponse = await applyRateLimit(request, 20, 'profile-update');
+    if (rateLimitResponse) return rateLimitResponse;
+
     const body = await request.json();
     const data = profileSchema.parse(body);
 
@@ -18,7 +22,7 @@ export async function PATCH(request: NextRequest) {
       where: { id: session.user.id },
       data: {
         name: data.name,
-        phone: data.phone || null,
+        phone: data.phone?.trim() || null,
       },
       select: {
         id: true,

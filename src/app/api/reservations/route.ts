@@ -5,13 +5,13 @@ import { authErrorResponse, requireAdmin } from '@/lib/auth';
 import { applyRateLimit } from '@/lib/ratelimit';
 
 const reservationSchema = z.object({
-  name: z.string().min(1),
-  phone: z.string().min(1),
-  email: z.string().email().optional().or(z.literal('')),
-  date: z.string().min(1),
-  time: z.string().min(1),
-  partySize: z.number().min(1),
-  specialRequests: z.string().optional(),
+  name: z.string().trim().min(1).max(100),
+  phone: z.string().trim().min(7).max(20).regex(/^[+()\-\s\d]+$/),
+  email: z.string().trim().email().max(255).optional().or(z.literal('')),
+  date: z.string().trim().regex(/^\d{4}-\d{2}-\d{2}$/),
+  time: z.string().trim().regex(/^\d{2}:\d{2}$/),
+  partySize: z.number().int().min(1).max(30),
+  specialRequests: z.string().trim().max(1000).optional(),
 });
 
 export async function POST(request: NextRequest) {
@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
         date: data.date,
         time: data.time,
         partySize: data.partySize,
-        specialRequests: data.specialRequests || null,
+        specialRequests: data.specialRequests?.trim() || null,
       },
     });
 

@@ -5,11 +5,11 @@ import { authErrorResponse, requireAdmin } from '@/lib/auth';
 import { applyRateLimit } from '@/lib/ratelimit';
 
 const contactSchema = z.object({
-  name: z.string().min(1),
-  email: z.string().email(),
-  phone: z.string().optional(),
-  subject: z.string().optional(),
-  message: z.string().min(1),
+  name: z.string().trim().min(1).max(100),
+  email: z.string().trim().email().max(255).transform((email) => email.toLowerCase()),
+  phone: z.string().trim().max(20).regex(/^[+()\-\s\d]*$/).optional(),
+  subject: z.string().trim().max(150).optional(),
+  message: z.string().trim().min(1).max(2000),
 });
 
 export async function POST(request: NextRequest) {
@@ -24,8 +24,8 @@ export async function POST(request: NextRequest) {
       data: {
         name: data.name,
         email: data.email,
-        phone: data.phone || null,
-        subject: data.subject || null,
+        phone: data.phone?.trim() || null,
+        subject: data.subject?.trim() || null,
         message: data.message,
       },
     });

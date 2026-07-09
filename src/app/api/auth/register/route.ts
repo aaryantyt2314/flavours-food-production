@@ -5,10 +5,10 @@ import bcrypt from 'bcryptjs';
 import { applyRateLimit } from '@/lib/ratelimit';
 
 const registerSchema = z.object({
-  name: z.string().min(1),
-  email: z.string().email(),
-  phone: z.string().optional(),
-  password: z.string().min(6),
+  name: z.string().trim().min(1).max(100),
+  email: z.string().trim().email().max(255).transform((email) => email.toLowerCase()),
+  phone: z.string().trim().max(20).regex(/^[+()\-\s\d]*$/).optional(),
+  password: z.string().min(8).max(128),
 });
 
 export async function POST(request: NextRequest) {
@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
       data: {
         name: data.name,
         email: data.email,
-        phone: data.phone || null,
+        phone: data.phone?.trim() || null,
         password: hashedPassword,
         role: 'customer',
       },

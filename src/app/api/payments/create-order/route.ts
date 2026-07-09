@@ -2,15 +2,19 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { z } from 'zod';
 import { authErrorResponse, requireAuth } from '@/lib/auth';
+import { applyRateLimit } from '@/lib/ratelimit';
 
 // Razorpay order creation
 const createOrderSchema = z.object({
-  orderId: z.string(),
+  orderId: z.string().trim().min(1).max(128),
 });
 
 export async function POST(request: NextRequest) {
   try {
     const session = await requireAuth();
+    const rateLimitResponse = await applyRateLimit(request, 10, 'payments-create-order');
+    if (rateLimitResponse) return rateLimitResponse;
+
     const body = await request.json();
     const data = createOrderSchema.parse(body);
 

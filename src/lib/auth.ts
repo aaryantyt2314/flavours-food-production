@@ -5,8 +5,15 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import bcrypt from 'bcryptjs';
 import { NextResponse } from 'next/server';
 import type { User as NextAuthUser } from 'next-auth';
+import { z } from 'zod';
 
 const nextAuthSecret = process.env.NEXTAUTH_SECRET;
+const isProduction = process.env.NODE_ENV === 'production';
+
+const credentialsSchema = z.object({
+  email: z.string().trim().email().max(255).transform((email) => email.toLowerCase()),
+  password: z.string().min(1).max(128),
+});
 
 export class AuthError extends Error {
   status: 401 | 403;
@@ -22,11 +29,43 @@ export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(db),
   session: {
     strategy: 'jwt',
+    maxAge: 60 * 60 * 24 * 7,
+    updateAge: 60 * 60 * 24,
   },
   pages: {
     signIn: '/login',
   },
   secret: nextAuthSecret,
+  useSecureCookies: isProduction,
+  cookies: {
+    sessionToken: {
+      name: isProduction ? '__Secure-next-auth.session-token' : 'next-auth.session-token',
+      options: {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+        secure: isProduction,
+      },
+    },
+    callbackUrl: {
+      name: isProduction ? '__Secure-next-auth.callback-url' : 'next-auth.callback-url',
+      options: {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+        secure: isProduction,
+      },
+    },
+    csrfToken: {
+      name: isProduction ? '__Host-next-auth.csrf-token' : 'next-auth.csrf-token',
+      options: {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+        secure: isProduction,
+      },
+    },
+  },
   providers: [
     CredentialsProvider({
       name: 'Credentials',
@@ -35,13 +74,12 @@ export const authOptions: NextAuthOptions = {
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
-        const email = credentials?.email?.trim().toLowerCase();
-        const password = credentials?.password;
-
-        if (!email || !password) {
+        const parsedCredentials = credentialsSchema.safeParse(credentials);
+        if (!parsedCredentials.success) {
           return null;
         }
 
+        const { email, password } = parsedCredentials.data;
         const user = await db.user.findUnique({ where: { email } });
         if (!user) return null;
 

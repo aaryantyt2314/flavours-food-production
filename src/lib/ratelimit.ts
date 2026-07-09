@@ -48,12 +48,20 @@ export async function applyRateLimit(request: NextRequest, limit = 10, namespace
   const redis = getRedis();
 
   if (!redis) {
+    if (process.env.NODE_ENV === 'production') {
+      console.error('Upstash Redis is required for production rate limiting.');
+      return NextResponse.json(
+        { error: 'Service temporarily unavailable' },
+        { status: 503 }
+      );
+    }
+
     console.warn('Upstash Redis is not configured; allowing request through without rate limiting.');
     return null;
   }
 
   const limiter = getLimiter(limit, namespace, redis);
-  const { success } = await limiter.limit(getClientIp(request));
+  const { success, limit: rateLimit, remaining, reset } = await limiter.limit(getClientIp(request));
 
   if (success) {
     return null;
@@ -61,6 +69,13 @@ export async function applyRateLimit(request: NextRequest, limit = 10, namespace
 
   return NextResponse.json(
     { error: 'Too many requests. Please try again later.' },
-    { status: 429 }
+    {
+      status: 429,
+      headers: {
+        'RateLimit-Limit': String(rateLimit),
+        'RateLimit-Remaining': String(remaining),
+        'RateLimit-Reset': String(Math.ceil(reset / 1000)),
+      },
+    }
   );
 }

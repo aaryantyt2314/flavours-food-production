@@ -3,17 +3,21 @@ import { db } from '@/lib/db';
 import { z } from 'zod';
 import crypto from 'crypto';
 import { authErrorResponse, requireAuth } from '@/lib/auth';
+import { applyRateLimit } from '@/lib/ratelimit';
 
 const verifySchema = z.object({
-  razorpayOrderId: z.string(),
-  razorpayPaymentId: z.string(),
-  razorpaySignature: z.string(),
-  dbOrderId: z.string(),
+  razorpayOrderId: z.string().trim().min(1).max(128),
+  razorpayPaymentId: z.string().trim().min(1).max(128),
+  razorpaySignature: z.string().trim().min(32).max(256),
+  dbOrderId: z.string().trim().min(1).max(128),
 });
 
 export async function POST(request: NextRequest) {
   try {
     const session = await requireAuth();
+    const rateLimitResponse = await applyRateLimit(request, 20, 'payments-verify');
+    if (rateLimitResponse) return rateLimitResponse;
+
     const body = await request.json();
     const data = verifySchema.parse(body);
 
