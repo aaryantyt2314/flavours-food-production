@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { Providers } from "@/components/Providers";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import StickyCartBar from "@/components/cart/StickyCartBar";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
@@ -47,6 +48,7 @@ export default async function RootLayout({
             <main className="flex-1">{children}</main>
             <Footer />
           </div>
+          <StickyCartBar />
           <Toaster position="top-right" richColors />
         </Providers>
       </body>

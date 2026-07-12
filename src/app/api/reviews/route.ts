@@ -27,6 +27,52 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const data = reviewSchema.parse(body);
 
+    // A review must reference an order the user actually placed. Verify the
+    // order belongs to this user before allowing a review to be created.
+    if (data.orderId) {
+      const order = await db.order.findUnique({
+        where: { id: data.orderId },
+        select: { userId: true, status: true },
+      });
+
+      if (!order || order.userId !== session.user.id) {
+        return NextResponse.json({ error: 'Order not found' }, { status: 404 });
+      }
+
+      if (order.status !== 'Completed') {
+        return NextResponse.json(
+          { error: 'You can only review completed orders' },
+          { status: 400 }
+        );
+      }
+    }
+
+    // If a menu item is referenced, make sure it exists.
+    if (data.menuItemId) {
+      const menuItem = await db.menuItem.findUnique({
+        where: { id: data.menuItemId },
+        select: { id: true },
+      });
+
+      if (!menuItem) {
+        return NextResponse.json({ error: 'Menu item not found' }, { status: 404 });
+      }
+    }
+
+    // Prevent duplicate reviews for the same item/order by the same user.
+    const existing = await db.review.findFirst({
+      where: {
+        userId: session.user.id,
+        menuItemId: data.menuItemId || null,
+        orderId: data.orderId || null,
+      },
+      select: { id: true },
+    });
+
+    if (existing) {
+      return NextResponse.json({ error: 'You have already reviewed this' }, { status: 409 });
+    }
+
     const review = await db.review.create({
       data: {
         userId: session.user.id,

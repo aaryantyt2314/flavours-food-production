@@ -36,13 +36,20 @@ export async function POST(request: NextRequest) {
       .update(`${data.razorpayOrderId}|${data.razorpayPaymentId}`)
       .digest('hex');
 
-    if (expectedSignature !== data.razorpaySignature) {
+    // Constant-time comparison to avoid leaking the signature via timing.
+    const expectedBuffer = Buffer.from(expectedSignature, 'hex');
+    const providedBuffer = Buffer.from(data.razorpaySignature, 'hex');
+    const signatureValid =
+      expectedBuffer.length === providedBuffer.length &&
+      crypto.timingSafeEqual(expectedBuffer, providedBuffer);
+
+    if (!signatureValid) {
       return NextResponse.json({ error: 'Invalid payment signature' }, { status: 400 });
     }
 
     const existingOrder = await db.order.findUnique({
       where: { id: data.dbOrderId },
-      select: { id: true, userId: true, razorpayOrderId: true },
+      select: { id: true, userId: true, razorpayOrderId: true, paymentStatus: true },
     });
 
     if (!existingOrder) {
@@ -55,6 +62,14 @@ export async function POST(request: NextRequest) {
 
     if (existingOrder.razorpayOrderId !== data.razorpayOrderId) {
       return NextResponse.json({ error: 'Order mismatch' }, { status: 400 });
+    }
+
+    // Don't re-process an already-paid order (replay protection).
+    if (existingOrder.paymentStatus === 'paid') {
+      return NextResponse.json({
+        success: true,
+        order: { id: existingOrder.id, status: 'Confirmed', paymentStatus: 'paid' },
+      });
     }
 
     // Update order as paid

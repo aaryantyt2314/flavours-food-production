@@ -1,12 +1,20 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
-import { Menu, X, ShoppingCart, User, Phone } from 'lucide-react';
-import { useSession } from 'next-auth/react';
+import { useEffect, useRef, useState } from 'react';
+import { Menu, X, ShoppingCart, User, Phone, LayoutDashboard, LogOut } from 'lucide-react';
+import { useSession, signOut } from 'next-auth/react';
 import { useCartStore } from '@/context/CartStore';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import CartDrawer from '@/components/cart/CartDrawer';
 
 const navLinks = [
@@ -21,8 +29,22 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { data: session } = useSession();
   const itemCount = useCartStore((s) => s.getItemCount());
-  const accountHref = session ? '/dashboard' : '/login';
-  const accountLabel = session ? 'My Account' : 'Login / Register';
+  const isAdmin = session?.user?.role === 'admin';
+
+  const handleLogout = () => signOut({ callbackUrl: '/' });
+
+  // Bump the cart icon whenever the item count goes up
+  const [bumped, setBumped] = useState(false);
+  const prevCount = useRef(itemCount);
+  useEffect(() => {
+    const increased = itemCount > prevCount.current;
+    prevCount.current = itemCount;
+    if (increased) {
+      setBumped(true);
+      const t = setTimeout(() => setBumped(false), 400);
+      return () => clearTimeout(t);
+    }
+  }, [itemCount]);
 
   return (
     <header className="sticky top-0 z-50 bg-brand-cream/95 backdrop-blur-md border-b border-brand-tan/30 shadow-sm">
@@ -79,9 +101,12 @@ export default function Navbar() {
             <Sheet>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" className="relative text-brand-dark hover:text-brand-maroon hover:bg-brand-tan/20">
-                  <ShoppingCart className="w-5 h-5" />
+                  <ShoppingCart className={`w-5 h-5 ${bumped ? 'animate-cart-bump' : ''}`} />
                   {itemCount > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-brand-red text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center animate-in zoom-in-50">
+                    <span
+                      key={itemCount}
+                      className="absolute -top-1 -right-1 bg-brand-red text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center animate-in zoom-in-50"
+                    >
                       {itemCount}
                     </span>
                   )}
@@ -94,11 +119,43 @@ export default function Navbar() {
             </Sheet>
 
             {/* User */}
-            <Link href={accountHref}>
-              <Button variant="ghost" size="icon" className="text-brand-dark hover:text-brand-maroon hover:bg-brand-tan/20">
-                <User className="w-5 h-5" />
-              </Button>
-            </Link>
+            {session ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="text-brand-dark hover:text-brand-maroon hover:bg-brand-tan/20">
+                    <User className="w-5 h-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-52">
+                  <DropdownMenuLabel className="truncate">
+                    {session.user?.name || session.user?.email || 'My Account'}
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link href="/dashboard" className="cursor-pointer">
+                      <User className="w-4 h-4 mr-2" /> My Account
+                    </Link>
+                  </DropdownMenuItem>
+                  {isAdmin && (
+                    <DropdownMenuItem asChild>
+                      <Link href="/admin" className="cursor-pointer text-brand-maroon focus:text-brand-maroon">
+                        <LayoutDashboard className="w-4 h-4 mr-2" /> Admin Dashboard
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-600 focus:text-red-600">
+                    <LogOut className="w-4 h-4 mr-2" /> Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Link href="/login">
+                <Button variant="ghost" size="icon" className="text-brand-dark hover:text-brand-maroon hover:bg-brand-tan/20">
+                  <User className="w-5 h-5" />
+                </Button>
+              </Link>
+            )}
 
             {/* Mobile Menu Toggle */}
             <Button
@@ -127,12 +184,32 @@ export default function Navbar() {
                 </Link>
               ))}
               <Link
-                href={accountHref}
+                href={session ? '/dashboard' : '/login'}
                 onClick={() => setMobileOpen(false)}
                 className="px-3 py-2 text-sm font-medium text-brand-maroon hover:bg-brand-tan/20 rounded-md transition-colors"
               >
-                {accountLabel}
+                {session ? 'My Account' : 'Login / Register'}
               </Link>
+              {isAdmin && (
+                <Link
+                  href="/admin"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-brand-maroon hover:bg-brand-tan/20 rounded-md transition-colors"
+                >
+                  <LayoutDashboard className="w-4 h-4" /> Admin Dashboard
+                </Link>
+              )}
+              {session && (
+                <button
+                  onClick={() => {
+                    setMobileOpen(false);
+                    handleLogout();
+                  }}
+                  className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-md transition-colors text-left"
+                >
+                  <LogOut className="w-4 h-4" /> Logout
+                </button>
+              )}
               <a
                 href="https://wa.me/917817878595?text=Hi%2C%20I%27d%20like%20to%20know%20more%20about%20your%20menu%2Forder."
                 target="_blank"

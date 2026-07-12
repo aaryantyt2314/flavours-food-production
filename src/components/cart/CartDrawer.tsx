@@ -1,7 +1,7 @@
 'use client';
 
 import { useCartStore } from '@/context/CartStore';
-import { X, Plus, Minus, ShoppingBag } from 'lucide-react';
+import { Plus, Minus, ShoppingBag, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import Link from 'next/link';
@@ -79,6 +79,11 @@ export default function CartDrawer() {
         <div className="flex items-center justify-between">
           <span className="font-semibold text-brand-dark">Total</span>
           <span className="text-lg font-bold text-brand-maroon">₹{getTotal()}</span>
+        </div>
+
+        <div className="flex items-center justify-center gap-1.5 rounded-lg bg-brand-green/10 py-1.5 px-3">
+          <Clock className="w-3.5 h-3.5 text-brand-green shrink-0" />
+          <span className="text-xs font-medium text-brand-green">Delivery in 35–45 min</span>
         </div>
 
         <div className="flex gap-2">

@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useCartStore } from '@/context/CartStore';
-import { ShoppingBag, MapPin, CreditCard, Tag, CheckCircle2, Loader2, Banknote, Wallet } from 'lucide-react';
+import { ShoppingBag, MapPin, CreditCard, Tag, CheckCircle2, Loader2, Banknote, Wallet, Check, Clock, ShieldCheck } from 'lucide-react';
 import { toast } from 'sonner';
 import { useSession } from 'next-auth/react';
 
@@ -18,6 +18,46 @@ declare global {
   interface Window {
     Razorpay: any;
   }
+}
+
+const CHECKOUT_STEPS = ['Cart', 'Delivery & Payment', 'Confirmation'];
+
+function CheckoutSteps({ currentStep }: { currentStep: number }) {
+  return (
+    <div className="flex items-center justify-center gap-0 py-5 px-4">
+      {CHECKOUT_STEPS.map((label, i) => {
+        const done = i < currentStep;
+        const active = i === currentStep;
+        return (
+          <div key={label} className="flex items-center">
+            <div className="flex items-center gap-2">
+              <span
+                className={`flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold shrink-0 transition-colors ${
+                  done
+                    ? 'bg-brand-green text-white'
+                    : active
+                      ? 'bg-brand-maroon text-white'
+                      : 'bg-brand-tan/40 text-brand-maroon/60'
+                }`}
+              >
+                {done ? <Check className="w-4 h-4" /> : i + 1}
+              </span>
+              <span
+                className={`text-xs sm:text-sm font-medium ${
+                  active ? 'text-brand-dark' : done ? 'text-brand-green' : 'text-muted-foreground'
+                }`}
+              >
+                {label}
+              </span>
+            </div>
+            {i < CHECKOUT_STEPS.length - 1 && (
+              <div className={`w-6 sm:w-12 h-px mx-2 sm:mx-3 ${done ? 'bg-brand-green' : 'bg-brand-tan/50'}`} />
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
 }
 
 export default function CheckoutPage() {
@@ -203,7 +243,8 @@ export default function CheckoutPage() {
 
   if (orderPlaced) {
     return (
-      <div className="min-h-screen bg-brand-cream flex items-center justify-center p-4">
+      <div className="min-h-screen bg-brand-cream flex flex-col items-center justify-center p-4">
+        <CheckoutSteps currentStep={3} />
         <Card className="max-w-md w-full text-center">
           <CardContent className="p-8">
             <CheckCircle2 className="w-20 h-20 text-brand-green mx-auto mb-4" />
@@ -257,7 +298,8 @@ export default function CheckoutPage() {
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
+        <CheckoutSteps currentStep={1} />
         <form onSubmit={handleSubmit}>
           <div className="grid lg:grid-cols-3 gap-6">
             {/* Delivery Details */}
@@ -390,9 +432,16 @@ export default function CheckoutPage() {
                     <span className="text-xl font-bold text-brand-maroon">₹{total}</span>
                   </div>
 
+                  <div className="flex items-center justify-center gap-1.5 mt-4 rounded-lg bg-brand-green/10 py-2 px-3">
+                    <Clock className="w-3.5 h-3.5 text-brand-green shrink-0" />
+                    <span className="text-xs font-medium text-brand-green">
+                      Estimated delivery: 35–45 min after confirmation
+                    </span>
+                  </div>
+
                   <Button
                     type="submit"
-                    className="w-full bg-brand-maroon hover:bg-brand-dark text-white h-12 text-base mt-4"
+                    className="w-full bg-brand-maroon hover:bg-brand-dark text-white h-12 text-base mt-2"
                     disabled={loading}
                   >
                     {loading ? (
@@ -407,10 +456,19 @@ export default function CheckoutPage() {
                     )}
                   </Button>
 
-                  {paymentMethod === 'razorpay' && (
-                    <div className="flex items-center justify-center gap-2 mt-2">
-                      <span className="text-[10px] text-muted-foreground">Secured by</span>
-                      <span className="text-xs font-semibold text-brand-maroon">Razorpay</span>
+                  {paymentMethod === 'razorpay' ? (
+                    <div className="flex items-center justify-center gap-1.5 mt-2">
+                      <ShieldCheck className="w-3.5 h-3.5 text-brand-green" />
+                      <span className="text-[10px] text-muted-foreground">
+                        100% secure payment · Powered by <span className="font-semibold text-brand-maroon">Razorpay</span>
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-center gap-1.5 mt-2">
+                      <ShieldCheck className="w-3.5 h-3.5 text-brand-green" />
+                      <span className="text-[10px] text-muted-foreground">
+                        No payment now — pay cash or UPI on delivery
+                      </span>
                     </div>
                   )}
                 </CardContent>

@@ -37,11 +37,34 @@ function getLimiter(limit: number, namespace: string, redis: Redis) {
   return limiter;
 }
 
-function getClientIp(request: NextRequest) {
-  const forwardedFor = request.headers.get('x-forwarded-for');
-  const realIp = request.headers.get('x-real-ip');
+// The leftmost entry of `x-forwarded-for` is fully client-controlled, so using
+// it lets an attacker rotate the header to defeat rate limiting. Instead we
+// trust only headers set by the hosting proxy (Cloudflare / Vercel / nginx),
+// and for `x-forwarded-for` we take the entry contributed by our own trusted
+// proxy — i.e. `TRUSTED_PROXY_HOPS` positions from the right (default 1).
+const TRUSTED_PROXY_HOPS = Number(process.env.TRUSTED_PROXY_HOPS ?? '1');
 
-  return forwardedFor?.split(',')[0]?.trim() || realIp || '127.0.0.1';
+function getClientIp(request: NextRequest) {
+  // Platform-provided headers a client cannot spoof (the proxy overwrites them).
+  const trusted =
+    request.headers.get('cf-connecting-ip') ||
+    request.headers.get('x-real-ip');
+  if (trusted) return trusted.trim();
+
+  const forwardedFor = request.headers.get('x-forwarded-for');
+  if (forwardedFor) {
+    const parts = forwardedFor.split(',').map((p) => p.trim()).filter(Boolean);
+    if (parts.length > 0) {
+      const hops = Number.isFinite(TRUSTED_PROXY_HOPS) && TRUSTED_PROXY_HOPS > 0
+        ? TRUSTED_PROXY_HOPS
+        : 1;
+      // Pick from the right so client-appended entries on the left are ignored.
+      const index = Math.max(0, parts.length - hops);
+      return parts[index];
+    }
+  }
+
+  return '127.0.0.1';
 }
 
 export async function applyRateLimit(request: NextRequest, limit = 10, namespace = 'default') {

@@ -4,6 +4,15 @@ import { z } from 'zod';
 import { authErrorResponse, requireAuth } from '@/lib/auth';
 import { applyRateLimit } from '@/lib/ratelimit';
 
+// Thrown inside the order transaction when a coupon's usage limit was
+// exhausted by a concurrent order between validation and claiming.
+class CouponUnavailableError extends Error {
+  constructor() {
+    super('Coupon is no longer available');
+    this.name = 'CouponUnavailableError';
+  }
+}
+
 const orderStatuses = ['Placed', 'Confirmed', 'Preparing', 'Out for Delivery', 'Ready', 'Completed', 'Cancelled'] as const;
 
 const orderItemSchema = z.object({
@@ -71,6 +80,7 @@ export async function POST(request: NextRequest) {
     });
 
     let discount = 0;
+    let usageLimitForClaim: number | null = null;
     const couponCode = data.couponCode?.toUpperCase() || null;
     if (couponCode) {
       const coupon = await db.coupon.findUnique({ where: { code: couponCode } });
@@ -80,6 +90,8 @@ export async function POST(request: NextRequest) {
       if (!couponUsable) {
         return NextResponse.json({ error: 'Coupon is not valid' }, { status: 400 });
       }
+
+      usageLimitForClaim = coupon!.usageLimit ?? null;
 
       if (coupon!.type === 'percentage') {
         discount = Math.round((subtotal * coupon!.value) / 100);
@@ -93,36 +105,57 @@ export async function POST(request: NextRequest) {
 
     const total = Math.max(subtotal - discount, 0);
 
-    // Create order
-    const order = await db.order.create({
-      data: {
-        userId: session.user.id,
-        subtotal,
-        discount,
-        total,
-        couponCode,
-        notes: data.notes?.trim() || null,
-        paymentMethod: data.paymentMethod,
-        paymentStatus: data.paymentMethod === 'cod' ? 'pending' : 'pending',
-        items: {
-          create: orderItems,
-        },
-      },
-      include: { items: true },
-    });
+    // Create the order and atomically claim the coupon slot in a single
+    // transaction. The coupon increment uses a conditional updateMany so two
+    // concurrent orders cannot both push usedCount past usageLimit (TOCTOU).
+    const shouldClaimCoupon = Boolean(couponCode && discount > 0);
 
-    // Increment coupon usage if applicable
-    if (couponCode && discount > 0) {
-      await db.coupon.update({
-        where: { code: couponCode },
-        data: { usedCount: { increment: 1 } },
+    const order = await db.$transaction(async (tx) => {
+      if (shouldClaimCoupon) {
+        const claimed = await tx.coupon.updateMany({
+          where: {
+            code: couponCode!,
+            isActive: true,
+            // Only claim if the coupon still has capacity. usageLimit === null
+            // means unlimited, so match that case explicitly.
+            OR: [
+              { usageLimit: null },
+              { usedCount: { lt: usageLimitForClaim ?? 0 } },
+            ],
+          },
+          data: { usedCount: { increment: 1 } },
+        });
+
+        if (claimed.count === 0) {
+          throw new CouponUnavailableError();
+        }
+      }
+
+      return tx.order.create({
+        data: {
+          userId: session.user.id,
+          subtotal,
+          discount,
+          total,
+          couponCode,
+          notes: data.notes?.trim() || null,
+          paymentMethod: data.paymentMethod,
+          paymentStatus: data.paymentMethod === 'cod' ? 'pending' : 'pending',
+          items: {
+            create: orderItems,
+          },
+        },
+        include: { items: true },
       });
-    }
+    });
 
     return NextResponse.json(order, { status: 201 });
   } catch (error: unknown) {
     const authResponse = authErrorResponse(error);
     if (authResponse) return authResponse;
+    if (error instanceof CouponUnavailableError) {
+      return NextResponse.json({ error: 'Coupon is no longer available' }, { status: 409 });
+    }
     console.error('Order creation error:', error);
     if (error instanceof z.ZodError) {
       return NextResponse.json({ error: 'Validation failed', details: error.issues }, { status: 400 });
