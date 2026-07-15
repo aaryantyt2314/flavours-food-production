@@ -4,6 +4,7 @@ import { z } from 'zod';
 import crypto from 'crypto';
 import { authErrorResponse, requireAuth } from '@/lib/auth';
 import { applyRateLimit } from '@/lib/ratelimit';
+import { notifyAdmin } from '@/lib/notify';
 
 const verifySchema = z.object({
   razorpayOrderId: z.string().trim().min(1).max(128),
@@ -81,6 +82,13 @@ export async function POST(request: NextRequest) {
         paymentStatus: 'paid',
         status: 'Confirmed',
       },
+    });
+
+    await notifyAdmin({
+      kind: 'payment',
+      orderId: updatedOrder.id,
+      total: updatedOrder.total,
+      customer: session.user.name || session.user.email || 'Customer',
     });
 
     return NextResponse.json({

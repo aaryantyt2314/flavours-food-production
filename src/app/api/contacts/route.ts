@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { authErrorResponse, requireAdmin } from '@/lib/auth';
 import { applyRateLimit } from '@/lib/ratelimit';
+import { notifyAdmin } from '@/lib/notify';
 
 const contactSchema = z.object({
   name: z.string().trim().min(1).max(100),
@@ -28,6 +29,13 @@ export async function POST(request: NextRequest) {
         subject: data.subject?.trim() || null,
         message: data.message,
       },
+    });
+
+    await notifyAdmin({
+      kind: 'inquiry',
+      name: inquiry.name,
+      email: inquiry.email,
+      subject: inquiry.subject,
     });
 
     return NextResponse.json(inquiry, { status: 201 });

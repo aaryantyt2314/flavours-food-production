@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { authErrorResponse, requireAuth } from '@/lib/auth';
 import { applyRateLimit } from '@/lib/ratelimit';
+import { notifyAdmin } from '@/lib/notify';
 
 // Thrown inside the order transaction when a coupon's usage limit was
 // exhausted by a concurrent order between validation and claiming.
@@ -147,6 +148,15 @@ export async function POST(request: NextRequest) {
         },
         include: { items: true },
       });
+    });
+
+    await notifyAdmin({
+      kind: 'order',
+      orderId: order.id,
+      total: order.total,
+      paymentMethod: order.paymentMethod,
+      itemCount: order.items.length,
+      customer: session.user.name || session.user.email || 'Customer',
     });
 
     return NextResponse.json(order, { status: 201 });
