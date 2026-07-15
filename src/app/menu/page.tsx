@@ -34,6 +34,17 @@ interface CategoryData {
   _count: { items: number };
 }
 
+async function fetchJsonArray<T>(url: string, fallbackMessage: string): Promise<T[]> {
+  const response = await fetch(url);
+  const data = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    throw new Error(data?.error || fallbackMessage);
+  }
+
+  return Array.isArray(data) ? data : [];
+}
+
 function MenuCard({ item }: { item: MenuItemData }) {
   const addItem = useCartStore((s) => s.addItem);
   const cartItems = useCartStore((s) => s.items);
@@ -154,15 +165,15 @@ function MenuPageContent() {
 
   const { data: categories = [] } = useQuery<CategoryData[]>({
     queryKey: ['categories'],
-    queryFn: () => fetch('/api/categories').then((r) => r.json()),
+    queryFn: () => fetchJsonArray<CategoryData>('/api/categories', 'Failed to fetch categories'),
   });
 
-  const { data: menuItems = [], isLoading } = useQuery<MenuItemData[]>({
+  const { data: menuItems = [], isLoading, isError } = useQuery<MenuItemData[]>({
     queryKey: ['menu', activeCategory],
     queryFn: () => {
       const params = new URLSearchParams();
       if (activeCategory && activeCategory !== 'all') params.set('category', activeCategory);
-      return fetch(`/api/menu?${params}`).then((r) => r.json());
+      return fetchJsonArray<MenuItemData>(`/api/menu?${params}`, 'Failed to fetch menu items');
     },
   });
 
@@ -236,6 +247,11 @@ function MenuPageContent() {
             {[...Array(6)].map((_, i) => (
               <div key={i} className="h-32 rounded-xl bg-muted animate-pulse" />
             ))}
+          </div>
+        ) : isError ? (
+          <div className="text-center py-16">
+            <p className="text-lg font-medium text-brand-dark mb-1">Menu is unavailable right now</p>
+            <p className="text-sm text-muted-foreground">Please try again in a moment.</p>
           </div>
         ) : filteredItems.length === 0 ? (
           <div className="text-center py-16">

@@ -1,14 +1,15 @@
 import { db } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
+import { Prisma } from '@prisma/client';
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const category = searchParams.get('category');
     const featured = searchParams.get('featured');
-    const search = searchParams.get('search');
+    const search = searchParams.get('search')?.trim().slice(0, 100) || null;
 
-    const where: any = { isAvailable: true };
+    const where: Prisma.MenuItemWhereInput = { isAvailable: true };
 
     if (category) {
       const cat = await db.category.findFirst({ where: { slug: category } });

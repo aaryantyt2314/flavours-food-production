@@ -59,5 +59,6 @@ prompt
 
 server.log
 # Skills directory
-/skills/".env" 
-".zscripts/" 
+/skills/.env
+.zscripts/
+

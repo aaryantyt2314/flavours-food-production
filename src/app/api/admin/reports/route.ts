@@ -8,7 +8,7 @@ export async function GET() {
     // Get all orders
     const orders = await db.order.findMany({
       orderBy: { createdAt: 'asc' },
-      select: { id: true, total: true, status: true, createdAt: true, paymentStatus: true },
+      select: { id: true, total: true, status: true, createdAt: true, paymentStatus: true, paymentMethod: true },
     });
 
     // Revenue over time (last 30 days grouped by day)
@@ -72,10 +72,9 @@ export async function GET() {
     const paidOrders = orders.filter(o => o.paymentStatus === 'paid');
     const totalPaidRevenue = paidOrders.reduce((sum, o) => sum + o.total, 0);
 
-    // Payment method distribution
+    // Payment method distribution (reuse the already-fetched orders)
     const paymentMethodCounts: Record<string, number> = {};
-    const allOrders = await db.order.findMany({ select: { paymentMethod: true } });
-    allOrders.forEach(o => {
+    orders.forEach(o => {
       paymentMethodCounts[o.paymentMethod] = (paymentMethodCounts[o.paymentMethod] || 0) + 1;
     });
     const paymentChart = Object.entries(paymentMethodCounts).map(([method, count]) => ({ method, count }));

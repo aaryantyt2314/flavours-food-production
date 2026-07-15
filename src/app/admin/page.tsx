@@ -52,6 +52,10 @@ const emptyMenuItemForm = {
 
 const PAGE_SIZE = 50;
 
+function asArray<T>(data: unknown): T[] {
+  return Array.isArray(data) ? data : [];
+}
+
 export default function AdminDashboard() {
   const [activeSection, setActiveSection] = useState('dashboard');
   const [mobileSidebar, setMobileSidebar] = useState(false);
@@ -131,20 +135,27 @@ export default function AdminDashboard() {
         ordersRes.json(), menuRes.json(), customersRes.json(), reservationsRes.json(), inquiriesRes.json(), couponsRes.json(),
       ]);
 
-      setOrders(ordersData);
-      setMenuItems(menuData);
-      setCustomers(customersData);
-      setReservations(reservationsData);
-      setInquiries(inquiriesData);
-      setCoupons(couponsData);
+      const nextOrders = asArray<AdminOrder>(ordersData);
+      const nextMenuItems = asArray<AdminMenuItem>(menuData);
+      const nextCustomers = asArray<AdminCustomer>(customersData);
+      const nextReservations = asArray<AdminReservation>(reservationsData);
+      const nextInquiries = asArray<AdminInquiry>(inquiriesData);
+      const nextCoupons = asArray<AdminCoupon>(couponsData);
+
+      setOrders(nextOrders);
+      setMenuItems(nextMenuItems);
+      setCustomers(nextCustomers);
+      setReservations(nextReservations);
+      setInquiries(nextInquiries);
+      setCoupons(nextCoupons);
       setMenuPage(0);
 
-      const totalRevenue = ordersData.reduce((sum: number, o: AdminOrder) => sum + (o.total || 0), 0);
+      const totalRevenue = nextOrders.reduce((sum: number, o: AdminOrder) => sum + (o.total || 0), 0);
       setStats({
-        orders: ordersData.length,
+        orders: nextOrders.length,
         revenue: totalRevenue,
-        customers: customersData.length,
-        items: menuData.length,
+        customers: nextCustomers.length,
+        items: nextMenuItems.length,
       });
     } catch (error) {
       console.error('Failed to load admin data:', error);
@@ -153,7 +164,7 @@ export default function AdminDashboard() {
 
   // Load categories for the menu dialog
   useEffect(() => {
-    fetch('/api/categories').then(r => r.json()).then(data => setCategories(data)).catch(() => {});
+    fetch('/api/categories').then(r => r.json()).then(data => setCategories(asArray(data))).catch(() => {});
   }, []);
 
   const handleSubmitMenuItem = async (e: React.FormEvent) => {

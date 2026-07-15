@@ -22,12 +22,23 @@ interface MenuItemData {
   category: { name: string; slug: string };
 }
 
+async function fetchFeaturedMenu(): Promise<MenuItemData[]> {
+  const response = await fetch('/api/menu?featured=true');
+  const data = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    throw new Error(data?.error || 'Failed to fetch featured menu items');
+  }
+
+  return Array.isArray(data) ? data : [];
+}
+
 export default function FeaturedDishes() {
   const addItem = useCartStore((s) => s.addItem);
 
-  const { data: items = [], isLoading } = useQuery<MenuItemData[]>({
+  const { data: items = [], isLoading, isError } = useQuery<MenuItemData[]>({
     queryKey: ['featured-menu'],
-    queryFn: () => fetch('/api/menu?featured=true').then((r) => r.json()),
+    queryFn: fetchFeaturedMenu,
   });
 
   const handleAddToCart = (item: MenuItemData) => {
@@ -60,6 +71,11 @@ export default function FeaturedDishes() {
             {[...Array(4)].map((_, i) => (
               <div key={i} className="h-64 rounded-xl bg-muted animate-pulse" />
             ))}
+          </div>
+        ) : isError ? (
+          <div className="rounded-lg border border-brand-tan/30 bg-white p-6 text-center">
+            <p className="text-sm font-medium text-brand-dark">Featured dishes are unavailable right now.</p>
+            <p className="mt-1 text-xs text-muted-foreground">Please try again in a moment.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
