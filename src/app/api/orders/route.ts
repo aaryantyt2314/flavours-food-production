@@ -57,7 +57,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'One or more menu items were not found' }, { status: 400 });
     }
 
-    const menuItemMap = new Map(menuItems.map((item) => [item.id, item]));
+    const menuItemMap = new Map(
+      menuItems.map((item): [string, typeof item] => [item.id, item])
+    );
     let subtotal = 0;
 
     const orderItems = data.items.map((item) => {

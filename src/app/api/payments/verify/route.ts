@@ -22,14 +22,10 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const data = verifySchema.parse(body);
 
-    const razorpayKeySecret = process.env.RAZORPAY_KEY_SECRET || (process.env.NODE_ENV !== 'production' ? 'dev-razorpay-secret' : undefined);
-
-    if (process.env.NODE_ENV === 'production' && !razorpayKeySecret) {
-      return NextResponse.json({ error: 'Razorpay is not configured on the server' }, { status: 500 });
-    }
+    const razorpayKeySecret = process.env.RAZORPAY_KEY_SECRET;
 
     if (!razorpayKeySecret) {
-      return NextResponse.json({ error: 'Razorpay secret is missing' }, { status: 500 });
+      return NextResponse.json({ error: 'Razorpay is not configured on the server' }, { status: 500 });
     }
 
     const expectedSignature = crypto

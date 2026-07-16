@@ -12,6 +12,13 @@ export async function GET() {
     database: false,
   };
 
+  if (!env.ok) {
+    console.error('[health] env problems:', {
+      missingRequired: env.missingRequired,
+      invalid: env.invalid,
+    });
+  }
+
   try {
     await db.$queryRaw`SELECT 1`;
     checks.database = true;
@@ -25,11 +32,6 @@ export async function GET() {
     {
       ok,
       checks,
-      env: {
-        missingRequired: env.missingRequired,
-        invalid: env.invalid,
-        warnings: env.warnings,
-      },
       timestamp: new Date().toISOString(),
     },
     { status: ok ? 200 : 503 }
