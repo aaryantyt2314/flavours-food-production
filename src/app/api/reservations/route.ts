@@ -61,9 +61,35 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     await requireAdmin();
+    const { searchParams } = new URL(request.url);
+    const since = searchParams.get('since');
+
+    const where: any = {};
+    if (since) {
+      const sinceDate = new Date(since);
+      if (isNaN(sinceDate.getTime())) {
+        return NextResponse.json({ error: 'Invalid since date format' }, { status: 400 });
+      }
+      where.createdAt = { gt: sinceDate };
+
+      const reservations = await db.reservation.findMany({
+        where,
+        select: {
+          id: true,
+          name: true,
+          partySize: true,
+          time: true,
+          createdAt: true,
+        },
+        orderBy: { createdAt: 'desc' },
+      });
+
+      return NextResponse.json(reservations);
+    }
+
     const reservations = await db.reservation.findMany({
       orderBy: { createdAt: 'desc' },
     });

@@ -11,13 +11,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import {
   LayoutDashboard, UtensilsCrossed, Package, Users, Tag, Image, MessageSquare, BarChart3,
-  CreditCard, CalendarDays, ArrowLeft, Plus, Edit, Trash2, Eye, Search, ChefHat
+  CreditCard, CalendarDays, ArrowLeft, Plus, Edit, Trash2, Eye, Search, ChefHat, Volume2, VolumeX
 } from 'lucide-react';
 import { toast } from 'sonner';
 import AdminReports from '@/components/admin/AdminReports';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { useSession } from 'next-auth/react';
+import { useAdminAlerts } from '@/hooks/useAdminAlerts';
 
 interface OrderItem { name: string; quantity: number; price: number; priceTier: string; }
 interface AdminOrder { id: string; total: number; subtotal: number; discount: number; status: string; paymentStatus: string; paymentMethod: string; createdAt: string; items: OrderItem[]; user?: { name: string; email: string; }; razorpayOrderId?: string; }
@@ -63,6 +64,7 @@ export default function AdminDashboard() {
   const router = useRouter();
   const { data: session, status } = useSession();
   const imagePreviewRef = useRef<string | null>(null);
+  const [isInitialLoadComplete, setIsInitialLoadComplete] = useState(false);
 
   // Data states
   const [stats, setStats] = useState({ orders: 0, revenue: 0, customers: 0, items: 0 });
@@ -157,10 +159,25 @@ export default function AdminDashboard() {
         customers: nextCustomers.length,
         items: nextMenuItems.length,
       });
+      setIsInitialLoadComplete(true);
     } catch (error) {
       console.error('Failed to load admin data:', error);
     }
   }, []);
+
+  const {
+    unreadOrders,
+    unreadReservations,
+    isMuted,
+    toggleMute,
+    audioUnlocked,
+    unlockAudio,
+  } = useAdminAlerts(
+    activeSection,
+    isInitialLoadComplete ? orders : undefined,
+    isInitialLoadComplete ? reservations : undefined,
+    loadAllData
+  );
 
   // Load categories for the menu dialog
   useEffect(() => {
@@ -300,8 +317,18 @@ export default function AdminDashboard() {
                   : 'text-brand-cream/70 hover:bg-brand-maroon/30 hover:text-white'
               }`}
             >
-              <item.icon className="w-4 h-4" />
-              {item.label}
+              <item.icon className="w-4 h-4 shrink-0" />
+              <span className="flex-1 text-left">{item.label}</span>
+              {item.section === 'orders' && unreadOrders > 0 && (
+                <span className="bg-brand-red text-white text-[10px] font-bold px-2 py-0.5 rounded-full min-w-[20px] text-center">
+                  {unreadOrders}
+                </span>
+              )}
+              {item.section === 'reservations' && unreadReservations > 0 && (
+                <span className="bg-brand-red text-white text-[10px] font-bold px-2 py-0.5 rounded-full min-w-[20px] text-center">
+                  {unreadReservations}
+                </span>
+              )}
             </button>
           ))}
         </nav>
@@ -334,8 +361,18 @@ export default function AdminDashboard() {
                     activeSection === item.section ? 'bg-brand-maroon text-white' : 'text-brand-cream/70'
                   }`}
                 >
-                  <item.icon className="w-4 h-4" />
-                  {item.label}
+                  <item.icon className="w-4 h-4 shrink-0" />
+                  <span className="flex-1 text-left">{item.label}</span>
+                  {item.section === 'orders' && unreadOrders > 0 && (
+                    <span className="bg-brand-red text-white text-[10px] font-bold px-2 py-0.5 rounded-full min-w-[20px] text-center">
+                      {unreadOrders}
+                    </span>
+                  )}
+                  {item.section === 'reservations' && unreadReservations > 0 && (
+                    <span className="bg-brand-red text-white text-[10px] font-bold px-2 py-0.5 rounded-full min-w-[20px] text-center">
+                      {unreadReservations}
+                    </span>
+                  )}
                 </button>
               ))}
             </nav>
@@ -354,6 +391,25 @@ export default function AdminDashboard() {
             <h1 className="text-lg font-semibold text-brand-dark capitalize">{activeSection}</h1>
           </div>
           <div className="flex items-center gap-2">
+            {!audioUnlocked && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="bg-yellow-50 text-yellow-800 border-yellow-300 hover:bg-yellow-100 flex items-center gap-1.5 animate-pulse text-xs shrink-0"
+                onClick={unlockAudio}
+              >
+                <span>🔔 Enable sound alerts</span>
+              </Button>
+            )}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleMute}
+              title={isMuted ? "Unmute alerts" : "Mute alerts"}
+              className="text-gray-500 hover:text-gray-700 shrink-0"
+            >
+              {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+            </Button>
             <Badge className="bg-brand-maroon text-white">Admin</Badge>
             <span className="text-sm text-muted-foreground hidden sm:inline">{session.user.name}</span>
           </div>

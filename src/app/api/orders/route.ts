@@ -185,8 +185,43 @@ export async function GET(request: NextRequest) {
       status: searchParams.get('status') || undefined,
     });
 
-    const where: { userId?: string; status?: string } = session.user.role === 'admin' ? {} : { userId: session.user.id };
+    const where: any = session.user.role === 'admin' ? {} : { userId: session.user.id };
     if (query.status) where.status = query.status;
+
+    const since = searchParams.get('since');
+    if (since) {
+      const sinceDate = new Date(since);
+      if (isNaN(sinceDate.getTime())) {
+        return NextResponse.json({ error: 'Invalid since date format' }, { status: 400 });
+      }
+      where.createdAt = { gt: sinceDate };
+
+      const orders = await db.order.findMany({
+        where,
+        select: {
+          id: true,
+          total: true,
+          status: true,
+          createdAt: true,
+          user: {
+            select: {
+              name: true,
+            },
+          },
+        },
+        orderBy: { createdAt: 'desc' },
+      });
+
+      const minimalOrders = orders.map((order) => ({
+        id: order.id,
+        total: order.total,
+        customerName: order.user?.name || 'Guest',
+        createdAt: order.createdAt,
+        status: order.status,
+      }));
+
+      return NextResponse.json(minimalOrders);
+    }
 
     const orders = await db.order.findMany({
       where,
